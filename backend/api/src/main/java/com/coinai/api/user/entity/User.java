@@ -1,5 +1,7 @@
 package com.coinai.api.user.entity;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -47,7 +49,8 @@ public class User {
     private Boolean emailVerified;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(nullable = false, columnDefinition = "user_status")
     private UserStatus status;
 
     @Column(name = "created_at", nullable = false)
