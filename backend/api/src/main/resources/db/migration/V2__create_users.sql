@@ -11,7 +11,7 @@ CREATE TABLE users (
 
     profile_picture TEXT,
 
-    preferred_currency CHAR(3) NOT NULL DEFAULT 'COP',
+    preferred_currency VARCHAR(3) NOT NULL DEFAULT 'COP',
 
     timezone VARCHAR(50) NOT NULL DEFAULT 'America/Bogota',
 
