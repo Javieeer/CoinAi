@@ -3,7 +3,7 @@ spring:
     name: api
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/conai
+    url: jdbc:postgresql://localhost:5432/coinai
     username: postgres
     password: postgres
 
