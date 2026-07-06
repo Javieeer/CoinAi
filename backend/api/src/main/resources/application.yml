@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: api
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/conai
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
