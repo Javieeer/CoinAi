@@ -1,5 +1,8 @@
 package com.coinai.api.auth.controller;
 
+import com.coinai.api.auth.dto.request.LoginRequest;
+import com.coinai.api.auth.dto.response.LoginResponse;
+import com.coinai.api.auth.service.AuthService;
 import com.coinai.api.user.dto.request.RegisterRequest;
 import com.coinai.api.user.dto.response.RegisterResponse;
 import com.coinai.api.user.service.UserService;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -25,4 +29,10 @@ public class AuthController {
 
     }
 
+    @PostMapping("/login")
+    public LoginResponse login(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        return authService.login(request);
+    }
 }
