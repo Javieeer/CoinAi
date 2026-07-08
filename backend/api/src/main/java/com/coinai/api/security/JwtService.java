@@ -1,5 +1,6 @@
 package com.coinai.api.security;
 
+import com.coinai.api.common.exception.InvalidTokenException;
 import com.coinai.api.config.JwtProperties;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -66,15 +67,15 @@ public class JwtService {
 
         try {
 
-        extractClaims(token);
-
-        return true;
+            extractClaims(token);
+            return true;
 
         } catch (JwtException | IllegalArgumentException ex) {
 
-                return false;
-        
+            throw new InvalidTokenException();
+
         }
+
     }
     
     private Claims extractClaims(String token) {
