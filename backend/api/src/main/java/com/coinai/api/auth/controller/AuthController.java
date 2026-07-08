@@ -6,6 +6,8 @@ import com.coinai.api.auth.service.AuthService;
 import com.coinai.api.user.dto.request.RegisterRequest;
 import com.coinai.api.user.dto.response.RegisterResponse;
 import com.coinai.api.user.service.UserService;
+import com.coinai.api.auth.dto.request.RefreshTokenRequest;
+import com.coinai.api.auth.dto.response.RefreshTokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,5 +36,14 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request
     ) {
         return authService.login(request);
+    }
+
+    @PostMapping("/refresh")
+    public RefreshTokenResponse refresh(
+            @Valid @RequestBody RefreshTokenRequest request
+    ) {
+
+        return authService.refresh(request);
+
     }
 }

@@ -1,7 +1,9 @@
 package com.coinai.api.auth.service.impl;
 
 import com.coinai.api.auth.dto.request.LoginRequest;
+import com.coinai.api.auth.dto.request.RefreshTokenRequest;
 import com.coinai.api.auth.dto.response.LoginResponse;
+import com.coinai.api.auth.dto.response.RefreshTokenResponse;
 import com.coinai.api.auth.service.AuthService;
 import com.coinai.api.common.exception.InvalidCredentialsException;
 import com.coinai.api.user.entity.User;
@@ -39,6 +41,25 @@ public class AuthServiceImpl implements AuthService {
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .expiresIn(jwtProperties.getAccessTokenExpirationInSeconds())
+                .build();
+
+    }
+
+    @Override
+    public RefreshTokenResponse refresh(RefreshTokenRequest request) {
+
+        if (!jwtService.isTokenValid(request.getRefreshToken())) {
+            throw new InvalidCredentialsException();
+        }
+
+        String email = jwtService.extractEmail(request.getRefreshToken());
+
+        String accessToken = jwtService.generateAccessToken(email);
+
+        return RefreshTokenResponse.builder()
+                .accessToken(accessToken)
+                .tokenType("Bearer")
+                .expiresIn(jwtProperties.getAccessTokenExpiration().toSeconds())
                 .build();
 
     }
