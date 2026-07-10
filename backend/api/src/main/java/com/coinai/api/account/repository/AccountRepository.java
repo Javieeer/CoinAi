@@ -7,6 +7,6 @@ import java.util.UUID;
 
 public interface AccountRepository extends JpaRepository<Account, UUID> {
 
-    boolean existsByUserIdAndName(UUID userId, String name);
+    boolean existsByUserIdAndNameIgnoreCase(UUID userId, String name);
 
 }
