@@ -1,7 +1,10 @@
 package com.coinai.api.category.controller;
 
 import java.util.List;
+import java.util.UUID;
+
 import com.coinai.api.category.dto.request.CreateCategoryRequest;
+import com.coinai.api.category.dto.request.UpdateCategoryRequest;
 import com.coinai.api.category.dto.response.CategoryResponse;
 import com.coinai.api.category.service.CategoryService;
 import com.coinai.api.movement.MovementType;
@@ -41,4 +44,19 @@ public class CategoryController {
 
     }
 
+    @PutMapping("/{id}")
+    public CategoryResponse update(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateCategoryRequest request
+    ) {
+        return categoryService.update(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID id) {
+
+        categoryService.delete(id);
+
+    }
 }

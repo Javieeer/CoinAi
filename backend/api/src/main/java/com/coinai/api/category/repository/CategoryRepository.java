@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
@@ -19,4 +20,5 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
     List<Category> findByIsDefaultTrueAndMovementType(MovementType movementType);
 
+    Optional<Category> findByIdAndUserId(UUID id, UUID userId);
 }

@@ -1,12 +1,16 @@
 package com.coinai.api.category.service.impl;
 
 import com.coinai.api.category.dto.request.CreateCategoryRequest;
+import com.coinai.api.category.dto.request.UpdateCategoryRequest;
 import com.coinai.api.category.dto.response.CategoryResponse;
 import com.coinai.api.category.entity.Category;
 import com.coinai.api.category.mapper.CategoryMapper;
 import com.coinai.api.category.repository.CategoryRepository;
 import com.coinai.api.category.service.CategoryService;
 import com.coinai.api.common.exception.CategoryAlreadyExistsException;
+import com.coinai.api.common.exception.CategoryDeletionNotAllowedException;
+import com.coinai.api.common.exception.CategoryModificationNotAllowedException;
+import com.coinai.api.common.exception.CategoryNotFoundException;
 import com.coinai.api.movement.MovementType;
 import com.coinai.api.security.service.AuthenticatedUserService;
 import com.coinai.api.user.entity.User;
@@ -17,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -82,4 +87,54 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
+    @Override
+    public CategoryResponse update(UUID id, UpdateCategoryRequest request) {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        Category category = categoryRepository
+                .findByIdAndUserId(id, user.getId())
+                .orElseThrow(CategoryNotFoundException::new);
+
+        if (category.isDefault()) {
+            throw new CategoryModificationNotAllowedException();
+        }
+
+        boolean duplicated = categoryRepository.existsByUserIdAndNameIgnoreCase(
+                user.getId(),
+                request.getName()
+        );
+
+        if (duplicated && !category.getName().equalsIgnoreCase(request.getName())) {
+            throw new CategoryAlreadyExistsException();
+        }
+
+        category.setName(request.getName());
+        category.setIcon(request.getIcon());
+        category.setColor(request.getColor());
+        category.setMovementType(request.getMovementType());
+
+        category = categoryRepository.save(category);
+
+        return categoryMapper.toResponse(category);
+
+    }
+
+    @Override
+    public void delete(UUID id) {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        Category category = categoryRepository
+                .findByIdAndUserId(id, user.getId())
+                .orElseThrow(CategoryNotFoundException::new);
+
+        if (category.isDefault()) {
+            throw new CategoryDeletionNotAllowedException();
+        }
+
+        categoryRepository.delete(category);
+
+    }
+    
 }
