@@ -11,7 +11,9 @@ CREATE TABLE movements (
 
     movement_date TIMESTAMP NOT NULL,
 
-    payment_method_id UUID NOT NULL,
+    account_id UUID NOT NULL,
+    
+    payment_method_id UUID,
 
     category_id UUID NOT NULL,
 
@@ -32,6 +34,10 @@ CREATE TABLE movements (
     CONSTRAINT fk_movement_user
         FOREIGN KEY (user_id)
         REFERENCES users(id),
+
+    CONSTRAINT fk_movement_account
+        FOREIGN KEY (account_id)
+        REFERENCES accounts(id),
 
     CONSTRAINT fk_movement_payment
         FOREIGN KEY (payment_method_id)

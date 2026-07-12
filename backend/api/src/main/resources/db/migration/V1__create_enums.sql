@@ -41,3 +41,23 @@ CREATE TYPE goal_status AS ENUM (
     'ACTIVE',
     'COMPLETED'
 );
+
+CREATE TYPE payment_method_type AS ENUM (
+    'CASH',
+    'DEBIT_CARD',
+    'CREDIT_CARD',
+    'BANK_TRANSFER',
+    'PSE',
+    'QR',
+    'NFC',
+    'DIGITAL_WALLET'
+);
+
+CREATE TYPE account_type AS ENUM (
+    'CASH',
+    'BANK',
+    'CREDIT_CARD',
+    'SAVINGS',
+    'CRYPTO',
+    'INVESTMENT'
+);
