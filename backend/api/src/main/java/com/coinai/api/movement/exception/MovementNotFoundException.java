@@ -1,4 +1,4 @@
-package com.coinai.api.common.exception;
+package com.coinai.api.movement.exception;
 
 public class MovementNotFoundException extends RuntimeException {
 

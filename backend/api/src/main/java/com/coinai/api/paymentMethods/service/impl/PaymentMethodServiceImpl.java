@@ -1,11 +1,11 @@
 package com.coinai.api.paymentMethods.service.impl;
 
-import com.coinai.api.common.exception.PaymentMethodAlreadyExistsException;
-import com.coinai.api.common.exception.PaymentMethodNotFoundException;
 import com.coinai.api.paymentMethods.dto.request.CreatePaymentMethodRequest;
 import com.coinai.api.paymentMethods.dto.request.UpdatePaymentMethodRequest;
 import com.coinai.api.paymentMethods.dto.response.PaymentMethodResponse;
 import com.coinai.api.paymentMethods.entity.PaymentMethod;
+import com.coinai.api.paymentMethods.exception.PaymentMethodAlreadyExistsException;
+import com.coinai.api.paymentMethods.exception.PaymentMethodNotFoundException;
 import com.coinai.api.paymentMethods.mapper.PaymentMethodMapper;
 import com.coinai.api.paymentMethods.repository.PaymentMethodRepository;
 import com.coinai.api.paymentMethods.service.PaymentMethodService;

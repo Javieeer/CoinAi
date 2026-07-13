@@ -1,4 +1,4 @@
-package com.coinai.api.common.exception;
+package com.coinai.api.category.exception;
 
 public class CategoryModificationNotAllowedException extends RuntimeException {
 

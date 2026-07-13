@@ -4,11 +4,11 @@ import com.coinai.api.account.dto.request.CreateAccountRequest;
 import com.coinai.api.account.dto.request.UpdateAccountRequest;
 import com.coinai.api.account.dto.response.AccountResponse;
 import com.coinai.api.account.entity.Account;
+import com.coinai.api.account.exception.AccountAlreadyExistsException;
+import com.coinai.api.account.exception.AccountNotFoundException;
 import com.coinai.api.account.mapper.AccountMapper;
 import com.coinai.api.account.repository.AccountRepository;
 import com.coinai.api.account.service.AccountService;
-import com.coinai.api.common.exception.AccountAlreadyExistsException;
-import com.coinai.api.common.exception.AccountNotFoundException;
 import com.coinai.api.security.service.AuthenticatedUserService;
 import com.coinai.api.user.entity.User;
 
