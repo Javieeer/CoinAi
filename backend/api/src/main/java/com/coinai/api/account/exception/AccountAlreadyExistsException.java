@@ -1,4 +1,4 @@
-package com.coinai.api.common.exception;
+package com.coinai.api.account.exception;
 
 public class AccountAlreadyExistsException extends RuntimeException {
 

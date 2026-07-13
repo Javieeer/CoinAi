@@ -1,9 +1,9 @@
 package com.coinai.api.user.service.impl;
 
-import com.coinai.api.common.exception.EmailAlreadyExistsException;
 import com.coinai.api.user.dto.request.RegisterRequest;
 import com.coinai.api.user.dto.response.RegisterResponse;
 import com.coinai.api.user.entity.User;
+import com.coinai.api.user.exception.EmailAlreadyExistsException;
 import com.coinai.api.user.mapper.UserMapper;
 import com.coinai.api.user.repository.UserRepository;
 import com.coinai.api.user.service.UserService;

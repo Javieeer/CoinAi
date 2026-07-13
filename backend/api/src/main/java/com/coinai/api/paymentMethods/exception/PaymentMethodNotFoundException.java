@@ -1,4 +1,4 @@
-package com.coinai.api.common.exception;
+package com.coinai.api.paymentMethods.exception;
 
 public class PaymentMethodNotFoundException extends RuntimeException {
     

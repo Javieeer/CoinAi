@@ -7,6 +7,21 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.coinai.api.account.exception.AccountAlreadyExistsException;
+import com.coinai.api.account.exception.AccountNotFoundException;
+import com.coinai.api.auth.exception.InvalidCredentialsException;
+import com.coinai.api.auth.exception.InvalidTokenException;
+import com.coinai.api.category.exception.CategoryAlreadyExistsException;
+import com.coinai.api.category.exception.CategoryDeletionNotAllowedException;
+import com.coinai.api.category.exception.CategoryModificationNotAllowedException;
+import com.coinai.api.category.exception.CategoryNotFoundException;
+import com.coinai.api.movement.exception.MovementNotFoundException;
+import com.coinai.api.paymentMethods.exception.PaymentMethodAlreadyExistsException;
+import com.coinai.api.paymentMethods.exception.PaymentMethodNotFoundException;
+import com.coinai.api.subcategory.exception.SubcategoryAlreadyExistsException;
+import com.coinai.api.subcategory.exception.SubcategoryNotFoundException;
+import com.coinai.api.user.exception.EmailAlreadyExistsException;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
@@ -235,6 +250,23 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(SubcategoryAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleSubcategoryAlreadyExists(
+        SubcategoryAlreadyExistsException ex,
+        HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
 }

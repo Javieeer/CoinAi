@@ -1,4 +1,4 @@
-package com.coinai.api.common.exception;
+package com.coinai.api.subcategory.exception;
 
 public class SubcategoryNotFoundException extends RuntimeException {
 

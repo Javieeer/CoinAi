@@ -323,7 +323,7 @@ class MovementServiceImplTest {
                 .thenReturn(Optional.empty());
 
         org.junit.jupiter.api.Assertions.assertThrows(
-                com.coinai.api.common.exception.MovementNotFoundException.class,
+                com.coinai.api.movement.exception.MovementNotFoundException.class,
                 () -> movementService.update(
                         UUID.randomUUID(),
                         new UpdateMovementRequest()
@@ -376,7 +376,7 @@ class MovementServiceImplTest {
                 .thenReturn(Optional.empty());
 
         org.junit.jupiter.api.Assertions.assertThrows(
-                com.coinai.api.common.exception.MovementNotFoundException.class,
+                com.coinai.api.movement.exception.MovementNotFoundException.class,
                 () -> movementService.delete(UUID.randomUUID())
         );
 

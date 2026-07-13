@@ -11,7 +11,7 @@ import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.coinai.api.common.exception.InvalidTokenException;
+import com.coinai.api.auth.exception.InvalidTokenException;
 import com.coinai.api.config.JwtProperties;
 
 class JwtServiceTest {
