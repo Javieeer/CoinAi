@@ -25,6 +25,8 @@ import com.coinai.api.paymentMethods.exception.PaymentMethodNotFoundException;
 import com.coinai.api.subcategory.exception.SubcategoryAlreadyExistsException;
 import com.coinai.api.subcategory.exception.SubcategoryNotFoundException;
 import com.coinai.api.user.exception.EmailAlreadyExistsException;
+import com.coinai.api.budget.exception.BudgetAlreadyExistsException;
+import com.coinai.api.budget.exception.BudgetNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -341,4 +343,37 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(BudgetAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleBudgetAlreadyExists(
+            BudgetAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(BudgetNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBudgetNotFound(
+            BudgetNotFoundException ex,
+            HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }

@@ -1,13 +1,16 @@
 package com.coinai.api.movement.repository;
 
-import com.coinai.api.movement.MovementType;
-import com.coinai.api.movement.entity.Movement;
-import org.springframework.data.jpa.repository.JpaRepository;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import com.coinai.api.movement.MovementType;
+import com.coinai.api.movement.entity.Movement;
 
 public interface MovementRepository extends JpaRepository<Movement, UUID> {
 
@@ -29,5 +32,36 @@ public interface MovementRepository extends JpaRepository<Movement, UUID> {
         UUID userId,
         LocalDateTime start,
         LocalDateTime end
+    );
+
+    List<Movement> findByUserIdAndCategoryIdAndMovementDateBetween(
+            UUID userId,
+            UUID categoryId,
+            LocalDateTime start,
+            LocalDateTime end
+    );
+
+    List<Movement> findByUserIdAndCategoryIdAndMovementTypeAndMovementDateBetween(
+            UUID userId,
+            UUID categoryId,
+            MovementType movementType,
+            LocalDateTime start,
+            LocalDateTime end
+    );
+
+    @Query("""
+        SELECT COALESCE(SUM(m.amount), 0)
+        FROM Movement m
+        WHERE m.user.id = :userId
+        AND m.category.id = :categoryId
+        AND m.movementType = :movementType
+        AND m.movementDate BETWEEN :start AND :end
+    """)
+    BigDecimal sumAmountByUserAndCategoryAndTypeAndDateBetween(
+            UUID userId,
+            UUID categoryId,
+            MovementType movementType,
+            LocalDateTime start,
+            LocalDateTime end
     );
 }

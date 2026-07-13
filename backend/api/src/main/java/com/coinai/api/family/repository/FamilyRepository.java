@@ -10,4 +10,6 @@ public interface FamilyRepository extends JpaRepository<Family, UUID> {
 
     Optional<Family> findByInviteCode(String inviteCode);
 
+    Optional<Family> findById(UUID id);
+
 }
