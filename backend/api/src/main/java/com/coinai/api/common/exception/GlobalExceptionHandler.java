@@ -169,5 +169,72 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(PaymentMethodAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handlePaymentMethodAlreadyExists(
+        PaymentMethodAlreadyExistsException ex,
+        HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(PaymentMethodNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePaymentMethodNotFound(
+        PaymentMethodNotFoundException ex,
+        HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
     
+    @ExceptionHandler(MovementNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMovementNotFound(
+        MovementNotFoundException ex,
+        HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(SubcategoryNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSubcategoryNotFound(
+        SubcategoryNotFoundException ex,
+        HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
 }

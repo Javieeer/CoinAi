@@ -1,6 +1,6 @@
-package com.coinai.api.account.entity;
+package com.coinai.api.paymentMethods.entity;
 
-import com.coinai.api.account.AccountType;
+import com.coinai.api.paymentMethods.PaymentMethodType;
 import com.coinai.api.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,13 +12,13 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-@Table(name = "accounts")
+@Table(name = "payment_methods")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Account {
+public class PaymentMethod {
 
     @Id
     @GeneratedValue
@@ -34,18 +34,21 @@ public class Account {
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false)
-    private AccountType type;
+    private PaymentMethodType type;
 
-    @Column(nullable = false, length = 10)
-    private String currency;
+    @Column(length = 20)
+    private String color;
 
-    @Column(nullable = false)
+    @Column(length = 100)
+    private String icon;
+
+    @Column(name = "is_archived", nullable = false)
     private boolean archived;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
 }

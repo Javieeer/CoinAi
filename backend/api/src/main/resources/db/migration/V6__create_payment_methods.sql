@@ -1,4 +1,4 @@
-CREATE TABLE accounts (
+CREATE TABLE payment_methods (
 
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -6,17 +6,19 @@ CREATE TABLE accounts (
 
     name VARCHAR(100) NOT NULL,
 
-    type VARCHAR(30) NOT NULL,
+    type payment_method_type NOT NULL,
 
-    currency VARCHAR(10) NOT NULL,
+    color VARCHAR(20),
 
-    archived BOOLEAN NOT NULL DEFAULT FALSE,
+    icon VARCHAR(100),
+
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_account_user
+    CONSTRAINT fk_payment_method_user
         FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
