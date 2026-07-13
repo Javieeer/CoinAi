@@ -1,4 +1,5 @@
 CREATE TABLE movements (
+
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
     user_id UUID NOT NULL,
@@ -12,7 +13,9 @@ CREATE TABLE movements (
     movement_date TIMESTAMP NOT NULL,
 
     account_id UUID NOT NULL,
-    
+
+    destination_account_id UUID,
+
     payment_method_id UUID,
 
     category_id UUID NOT NULL,
@@ -29,14 +32,17 @@ CREATE TABLE movements (
 
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    deleted_at TIMESTAMP,
-
     CONSTRAINT fk_movement_user
         FOREIGN KEY (user_id)
-        REFERENCES users(id),
+        REFERENCES users(id)
+        ON DELETE CASCADE,
 
     CONSTRAINT fk_movement_account
         FOREIGN KEY (account_id)
+        REFERENCES accounts(id),
+
+    CONSTRAINT fk_movement_destination_account
+        FOREIGN KEY (destination_account_id)
         REFERENCES accounts(id),
 
     CONSTRAINT fk_movement_payment
