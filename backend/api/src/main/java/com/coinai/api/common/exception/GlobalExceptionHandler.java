@@ -15,6 +15,10 @@ import com.coinai.api.category.exception.CategoryAlreadyExistsException;
 import com.coinai.api.category.exception.CategoryDeletionNotAllowedException;
 import com.coinai.api.category.exception.CategoryModificationNotAllowedException;
 import com.coinai.api.category.exception.CategoryNotFoundException;
+import com.coinai.api.family.exception.FamilyAlreadyExistsException;
+import com.coinai.api.family.exception.FamilyNotFoundException;
+import com.coinai.api.family.exception.FamilyOwnerCannotLeaveException;
+import com.coinai.api.family.exception.InvalidInviteCodeException;
 import com.coinai.api.movement.exception.MovementNotFoundException;
 import com.coinai.api.paymentMethods.exception.PaymentMethodAlreadyExistsException;
 import com.coinai.api.paymentMethods.exception.PaymentMethodNotFoundException;
@@ -267,6 +271,74 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(FamilyAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleFamilyAlreadyExists(
+            FamilyAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+        
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                HttpStatus.CONFLICT.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(FamilyNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleFamilyNotFound(
+            FamilyNotFoundException ex,
+            HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(InvalidInviteCodeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidInviteCode(
+            InvalidInviteCodeException ex,
+            HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(FamilyOwnerCannotLeaveException.class)
+    public ResponseEntity<ErrorResponse> handleFamilyOwnerCannotLeave(
+            FamilyOwnerCannotLeaveException ex,
+            HttpServletRequest request
+    ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
 }

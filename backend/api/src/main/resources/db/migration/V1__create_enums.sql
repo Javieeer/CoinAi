@@ -61,3 +61,8 @@ CREATE TYPE account_type AS ENUM (
     'CRYPTO',
     'INVESTMENT'
 );
+
+CREATE TYPE financial_mode AS ENUM (
+    'INDIVIDUAL',
+    'SHARED'
+);
