@@ -37,11 +37,6 @@ CREATE TYPE invitation_status AS ENUM (
     'EXPIRED'
 );
 
-CREATE TYPE goal_status AS ENUM (
-    'ACTIVE',
-    'COMPLETED'
-);
-
 CREATE TYPE payment_method_type AS ENUM (
     'CASH',
     'DEBIT_CARD',
@@ -65,4 +60,10 @@ CREATE TYPE account_type AS ENUM (
 CREATE TYPE financial_mode AS ENUM (
     'INDIVIDUAL',
     'SHARED'
+);
+
+CREATE TYPE goal_status AS ENUM (
+    'ACTIVE',
+    'COMPLETED',
+    'CANCELLED'
 );

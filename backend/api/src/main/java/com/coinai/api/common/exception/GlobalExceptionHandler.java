@@ -27,6 +27,8 @@ import com.coinai.api.subcategory.exception.SubcategoryNotFoundException;
 import com.coinai.api.user.exception.EmailAlreadyExistsException;
 import com.coinai.api.budget.exception.BudgetAlreadyExistsException;
 import com.coinai.api.budget.exception.BudgetNotFoundException;
+import com.coinai.api.goal.exception.GoalAlreadyExistsException;
+import com.coinai.api.goal.exception.GoalNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -376,4 +378,39 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+    @ExceptionHandler(GoalAlreadyExistsException.class)
+        public ResponseEntity<ErrorResponse> handleGoalAlreadyExists(
+                GoalAlreadyExistsException ex,
+                HttpServletRequest request
+        ) {
+
+                ErrorResponse response = new ErrorResponse(
+                        LocalDateTime.now(),
+                        HttpStatus.CONFLICT.value(),
+                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        ex.getMessage(),
+                        request.getRequestURI()
+                );
+
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+
+        @ExceptionHandler(GoalNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleGoalNotFound(
+                GoalNotFoundException ex,
+                HttpServletRequest request
+        ) {
+
+                ErrorResponse response = new ErrorResponse(
+                        LocalDateTime.now(),
+                        HttpStatus.NOT_FOUND.value(),
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
+                        ex.getMessage(),
+                        request.getRequestURI()
+                );
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
 }
