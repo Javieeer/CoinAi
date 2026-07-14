@@ -45,14 +45,29 @@ public class BudgetServiceImpl implements BudgetService {
 
         User user = authenticatedUserService.getCurrentUser();
 
-        if (budgetRepository.existsByUserIdAndFamilyIdAndCategoryIdAndMonthAndYear(
-                user.getId(),
-                request.getFamilyId(),
-                request.getCategoryId(),
-                request.getMonth(),
-                request.getYear()
-        )) {
-            throw new BudgetAlreadyExistsException();
+        boolean exists;
+
+        if (request.getFamilyId() == null) {
+        exists = budgetRepository
+                .existsByUserIdAndFamilyIsNullAndCategoryIdAndMonthAndYear(
+                        user.getId(),
+                        request.getCategoryId(),
+                        request.getMonth(),
+                        request.getYear()
+                );
+        } else {
+        exists = budgetRepository
+                .existsByUserIdAndFamilyIdAndCategoryIdAndMonthAndYear(
+                        user.getId(),
+                        request.getFamilyId(),
+                        request.getCategoryId(),
+                        request.getMonth(),
+                        request.getYear()
+                );
+        }
+
+        if (exists) {
+        throw new BudgetAlreadyExistsException();
         }
 
         Category category = categoryRepository.findByIdAndUserId(
@@ -154,10 +169,10 @@ public class BudgetServiceImpl implements BudgetService {
     }
 
     @Override
-    public BudgetResponse update(
-            UUID id,
-            UpdateBudgetRequest request
-    ) {
+        public BudgetResponse update(
+                UUID id,
+                UpdateBudgetRequest request
+        ) {
 
         User user = authenticatedUserService.getCurrentUser();
 
@@ -166,26 +181,39 @@ public class BudgetServiceImpl implements BudgetService {
                 user.getId()
         ).orElseThrow(BudgetNotFoundException::new);
 
-        if (
-                (
-                        !budget.getCategory().getId().equals(request.getCategoryId())
-                        || !budget.getMonth().equals(request.getMonth())
-                        || !budget.getYear().equals(request.getYear())
-                        || (
-                            (budget.getFamily() == null && request.getFamilyId() != null)
-                            || (budget.getFamily() != null && !budget.getFamily().getId().equals(request.getFamilyId()))
-                        )
-                )
-                &&
-                budgetRepository.existsByUserIdAndFamilyIdAndCategoryIdAndMonthAndYear(
-                        user.getId(),
-                        request.getFamilyId(),
-                        request.getCategoryId(),
-                        request.getMonth(),
-                        request.getYear()
-                )
-        ) {
-            throw new BudgetAlreadyExistsException();
+        boolean exists;
+
+        if (request.getFamilyId() == null) {
+                exists = budgetRepository
+                        .existsByUserIdAndFamilyIsNullAndCategoryIdAndMonthAndYear(
+                                user.getId(),
+                                request.getCategoryId(),
+                                request.getMonth(),
+                                request.getYear()
+                        );
+        } else {
+                exists = budgetRepository
+                        .existsByUserIdAndFamilyIdAndCategoryIdAndMonthAndYear(
+                                user.getId(),
+                                request.getFamilyId(),
+                                request.getCategoryId(),
+                                request.getMonth(),
+                                request.getYear()
+                        );
+        }
+
+        boolean changed =
+                !budget.getCategory().getId().equals(request.getCategoryId())
+                || !budget.getMonth().equals(request.getMonth())
+                || !budget.getYear().equals(request.getYear())
+                || (
+                        (budget.getFamily() == null && request.getFamilyId() != null)
+                        || (budget.getFamily() != null
+                                && !budget.getFamily().getId().equals(request.getFamilyId()))
+                );
+
+        if (changed && exists) {
+                throw new BudgetAlreadyExistsException();
         }
 
         Category category = categoryRepository.findByIdAndUserId(
@@ -196,8 +224,8 @@ public class BudgetServiceImpl implements BudgetService {
         Family family = null;
 
         if (request.getFamilyId() != null) {
-            family = familyRepository.findById(request.getFamilyId())
-                    .orElseThrow(FamilyNotFoundException::new);
+                family = familyRepository.findById(request.getFamilyId())
+                        .orElseThrow(FamilyNotFoundException::new);
         }
 
         budget.setCategory(category);
@@ -214,7 +242,7 @@ public class BudgetServiceImpl implements BudgetService {
                 budget
         );
 
-    }
+        }
 
     @Override
     public void delete(UUID id) {
