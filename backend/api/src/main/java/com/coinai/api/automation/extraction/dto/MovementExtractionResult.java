@@ -11,9 +11,15 @@ import java.util.List;
 @Builder
 public class MovementExtractionResult {
 
+    private String bank;
+
+    private String notificationType;
+
     private String movementType;
 
     private BigDecimal amount;
+
+    private String currency;
 
     private LocalDateTime date;
 
@@ -21,12 +27,26 @@ public class MovementExtractionResult {
 
     private String recipient;
 
+    private String paymentMethod;
+
     private String account;
+
+    private String cardLastDigits;
+
+    private String accountLastDigits;
+
+    private Boolean installmentPurchase;
+
+    private Integer installments;
 
     private String category;
 
-    private boolean needsUserInput;
+    private Boolean needsUserInput;
 
     private List<String> missingFields;
+
+    private String confidence;
+
+    private String rawMerchant;
 
 }

@@ -22,41 +22,131 @@ public class MovementExtractionPrompt {
             El formato debe ser exactamente:
 
             {
+              "bank": "...",
+              "notificationType": "...",
               "movementType": "...",
               "amount": 0,
+              "currency": "...",
               "date": "...",
+              "rawMerchant": "...",
               "merchant": "...",
-              "recipient": "...",
+              "recipient": null,
+              "paymentMethod": "...",
               "account": "...",
+              "cardLastDigits": "...",
+              "accountLastDigits": "...",
+              "installmentPurchase": false,
+              "installments": null,
               "category": null,
               "needsUserInput": false,
-              "missingFields": []
+              "missingFields": [],
+              "confidence": "HIGH"
             }
 
-            Reglas:
+            Reglas generales:
 
-            - movementType puede ser:
+            - Devuelve SIEMPRE todos los campos del JSON.
+            - Nunca omitas una propiedad.
+            - Si un dato no existe, usa null.
+            - Nunca inventes información.
+            - Devuelve únicamente JSON válido.
+
+            bank:
+            - Identifica el banco.
+            - Valores permitidos:
+              BANCOLOMBIA
+              NEQUI
+              DAVIVIENDA
+              BBVA
+              BANCO_DE_BOGOTA
+              OTRO
+
+            notificationType:
+            - Identifica el tipo de notificación.
+            - Valores permitidos:
+              CARD_PURCHASE
+              TRANSFER_SENT
+              TRANSFER_RECEIVED
+              PSE_PAYMENT
+              CASH_WITHDRAWAL
+              DEPOSIT
+              UNKNOWN
+
+            movementType:
+            - Valores permitidos:
               EXPENSE
               INCOME
               TRANSFER
 
-            - amount debe ser un número.
+            paymentMethod:
+            - Valores permitidos:
+              CREDIT_CARD
+              DEBIT_CARD
+              SAVINGS_ACCOUNT
+              CHECKING_ACCOUNT
+              PSE
+              UNKNOWN
 
-            - date debe estar en formato ISO-8601.
+            currency:
+            - Utiliza el código ISO.
+            - Ejemplo:
+              COP
+              USD
+              EUR
 
-            - merchant es el comercio cuando exista.
+            amount:
+            - Debe ser únicamente el número.
+            - No incluyas símbolos de moneda.
 
-            - recipient es la persona a quien se transfirió el dinero.
+            date:
+            - Formato ISO-8601.
 
-            - account es la cuenta origen o destino cuando aparezca.
+            rawMerchant:
+            - Debe contener exactamente el nombre del comercio tal como aparece en el correo.
+            - No lo modifiques.
+            - No lo limpies.
+            - No elimines prefijos ni sufijos.
 
-            - category siempre debe ser null.
+            merchant:
+            - Debe contener el nombre normalizado del comercio.
+            - Elimina códigos técnicos.
+            - Elimina sufijos innecesarios.
+            - Devuelve un nombre legible.
 
-            - Si falta información para registrar correctamente el movimiento:
+            recipient:
+            - Persona o empresa a quien se envió dinero.
+            - Si no existe usa null.
 
-                needsUserInput = true
+            cardLastDigits:
+            - Solo los últimos cuatro dígitos.
+            - Ejemplo:
+              "7646"
 
-            y missingFields debe contener los nombres de los campos faltantes.
+            accountLastDigits:
+            - Solo los últimos cuatro dígitos.
+            - Si no aparecen usa null.
+
+            installmentPurchase:
+            - true únicamente cuando el correo indique cuotas.
+
+            installments:
+            - Número de cuotas.
+            - Si no existe usa null.
+
+            category:
+            - Siempre null.
+            - CoinAI decidirá posteriormente la categoría.
+
+            confidence:
+            - HIGH cuando la información sea muy clara.
+            - MEDIUM cuando exista alguna duda.
+            - LOW cuando falten muchos datos.
+
+            needsUserInput:
+            - true cuando el movimiento no pueda registrarse automáticamente.
+
+            missingFields:
+            - Lista de campos faltantes para completar el movimiento.
 
             Si un dato no existe utiliza null.
 
