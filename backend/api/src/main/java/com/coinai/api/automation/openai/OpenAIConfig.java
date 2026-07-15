@@ -1,13 +1,11 @@
-package com.coinai.api.automation.provider.openai;
+package com.coinai.api.automation.openai;
 
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties(OpenAIProperties.class)
 public class OpenAIConfig {
 
     @Bean

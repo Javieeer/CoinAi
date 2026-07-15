@@ -1,29 +1,32 @@
-package com.coinai.api.automation.provider.openai.service.impl;
+package com.coinai.api.automation.openai;
 
-import com.coinai.api.automation.provider.openai.service.OpenAIClientService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import com.openai.client.OpenAIClient;
 import com.openai.models.ChatModel;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.Response;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 @Service
 @RequiredArgsConstructor
-public class OpenAIClientServiceImpl implements OpenAIClientService {
+public class OpenAIClientImpl implements AIClient {
 
-    private final OpenAIClient client;
+    private final com.openai.client.OpenAIClient openAIClient;
+    private final OpenAIProperties properties;
 
     @Override
     public String chat(String prompt) {
 
         ResponseCreateParams params = ResponseCreateParams.builder()
-                .model(ChatModel.GPT_5_MINI)
+                .model(properties.getModel())
                 .input(prompt)
                 .build();
 
-        Response response = client.responses().create(params);
+        Response response = openAIClient
+                .responses()
+                .create(params);
+
+        System.out.println(response.output());
 
         return response.output().stream()
             .filter(item -> item.message().isPresent())
@@ -32,7 +35,7 @@ public class OpenAIClientServiceImpl implements OpenAIClientService {
             .filter(content -> content.outputText().isPresent())
             .map(content -> content.outputText().get().text())
             .findFirst()
-            .orElse("");
+            .orElseThrow(() -> new RuntimeException("OpenAI did not return any text."));
 
     }
 
