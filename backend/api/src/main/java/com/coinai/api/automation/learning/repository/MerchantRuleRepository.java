@@ -8,9 +8,9 @@ import java.util.UUID;
 
 public interface MerchantRuleRepository extends JpaRepository<MerchantRule, Long> {
 
-    Optional<MerchantRule> findByUserIdAndRawMerchant(
-            UUID userId,
-            String rawMerchant
+    Optional<MerchantRule> findByUserIdAndNormalizedMerchant(
+        UUID userId,
+        String normalizedMerchant
     );
 
 }
