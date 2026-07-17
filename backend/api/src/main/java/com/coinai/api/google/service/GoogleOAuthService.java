@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public interface GoogleOAuthService {
 
-    String buildAuthorizationUrl();
+    String buildAuthorizationUrl(String state);
 
     GoogleTokenResponse exchangeCode(
             String code

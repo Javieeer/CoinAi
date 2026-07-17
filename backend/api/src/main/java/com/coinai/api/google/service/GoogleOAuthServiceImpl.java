@@ -28,7 +28,7 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
     private String clientSecret;
 
     @Override
-    public String buildAuthorizationUrl() {
+    public String buildAuthorizationUrl(String state) {
 
         String scope = URLEncoder.encode(
                 "openid email profile https://www.googleapis.com/auth/gmail.readonly",
@@ -41,7 +41,8 @@ public class GoogleOAuthServiceImpl implements GoogleOAuthService {
                 + "&response_type=code"
                 + "&scope=" + scope
                 + "&access_type=offline"
-                + "&prompt=consent";
+                + "&prompt=consent"
+                + "&state=" + state;
 
     }
 
