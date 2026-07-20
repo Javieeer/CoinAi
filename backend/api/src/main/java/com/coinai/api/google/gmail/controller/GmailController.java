@@ -1,5 +1,6 @@
 package com.coinai.api.google.gmail.controller;
 
+import com.coinai.api.google.gmail.dto.GmailMessageResponse;
 import com.coinai.api.google.gmail.service.GmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +15,7 @@ public class GmailController {
     private final GmailService gmailService;
 
     @GetMapping("/messages")
-    public List<String> messages() throws Exception {
+    public List<GmailMessageResponse> messages() throws Exception {
 
         return gmailService.listMessages();
 
