@@ -47,6 +47,12 @@ public class GmailServiceImpl implements GmailService {
 
         User user = authenticatedUserService.getCurrentUser();
 
+        return processUser(user);
+        
+    }
+
+    private List<GmailMessageResponse> processUser( User user) throws Exception {
+
         GoogleCredential credential =
                 credentialRepository.findByUserId(user.getId())
                         .orElseThrow();
