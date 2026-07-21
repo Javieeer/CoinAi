@@ -1,5 +1,7 @@
 package com.coinai.api.google.gmail.dto;
 
+import com.coinai.api.automation.parser.BankType;
+
 import lombok.Builder;
 import lombok.Getter;
 
@@ -17,4 +19,7 @@ public class GmailMessageResponse {
 
     private String snippet;
 
+    private BankType bankType;
+
+    private String body;
 }
