@@ -6,9 +6,11 @@ import com.coinai.api.auth.dto.response.LoginResponse;
 import com.coinai.api.auth.dto.response.RefreshTokenResponse;
 import com.coinai.api.auth.exception.InvalidCredentialsException;
 import com.coinai.api.auth.service.AuthService;
+import com.coinai.api.auth.service.RefreshTokenService;
 import com.coinai.api.user.entity.User;
 import com.coinai.api.user.repository.UserRepository;
 import com.coinai.api.security.JwtService;
+import com.coinai.api.security.service.AuthenticatedUserService;
 import com.coinai.api.config.JwtProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +24,8 @@ public class AuthServiceImpl implements AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final JwtProperties jwtProperties;
+    private final RefreshTokenService refreshTokenService;
+    private final AuthenticatedUserService authenticatedUserService;
 
     @Override
     public LoginResponse login(LoginRequest request) {
@@ -34,7 +38,11 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String accessToken = jwtService.generateAccessToken(user.getEmail());
-        String refreshToken = jwtService.generateRefreshToken(user.getEmail());
+
+        String refreshToken =
+                refreshTokenService
+                        .create(user)
+                        .getToken();
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
@@ -48,11 +56,13 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public RefreshTokenResponse refresh(RefreshTokenRequest request) {
 
-        if (!jwtService.isTokenValid(request.getRefreshToken())) {
-            throw new InvalidCredentialsException();
-        }
+        var refreshToken =
+                refreshTokenService.validate(
+                        request.getRefreshToken()
+                );
 
-        String email = jwtService.extractEmail(request.getRefreshToken());
+        String email =
+                refreshToken.getUser().getEmail();
 
         String accessToken = jwtService.generateAccessToken(email);
 
@@ -64,4 +74,12 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+    @Override
+    public void logout() {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        refreshTokenService.revoke(user);
+
+    }
 }
