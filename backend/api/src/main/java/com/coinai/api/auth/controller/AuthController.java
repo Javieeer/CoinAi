@@ -1,12 +1,15 @@
 package com.coinai.api.auth.controller;
 
+import com.coinai.api.auth.dto.request.ForgotPasswordRequest;
 import com.coinai.api.auth.dto.request.LoginRequest;
 import com.coinai.api.auth.dto.response.LoginResponse;
 import com.coinai.api.auth.service.AuthService;
+import com.coinai.api.auth.service.PasswordResetService;
 import com.coinai.api.user.dto.request.RegisterRequest;
 import com.coinai.api.user.dto.response.RegisterResponse;
 import com.coinai.api.user.service.UserService;
 import com.coinai.api.auth.dto.request.RefreshTokenRequest;
+import com.coinai.api.auth.dto.request.ResetPasswordRequest;
 import com.coinai.api.auth.dto.response.RefreshTokenResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ public class AuthController {
 
     private final UserService userService;
     private final AuthService authService;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -55,4 +59,28 @@ public class AuthController {
 
     }
 
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request
+    ) {
+
+        passwordResetService.createResetToken(
+                request.getEmail()
+        );
+
+    }
+
+    @PostMapping("/reset-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void resetPassword(
+            @Valid @RequestBody ResetPasswordRequest request
+    ) {
+
+        passwordResetService.resetPassword(
+                request.getToken(),
+                request.getNewPassword()
+        );
+
+    }
 }
