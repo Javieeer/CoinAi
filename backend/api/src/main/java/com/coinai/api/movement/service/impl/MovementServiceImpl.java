@@ -20,6 +20,7 @@ import com.coinai.api.subcategory.repository.SubcategoryRepository;
 import com.coinai.api.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +41,7 @@ public class MovementServiceImpl implements MovementService {
     private final AuthenticatedUserService authenticatedUserService;
 
     @Override
+    @Transactional
     public MovementResponse create(CreateMovementRequest request) {
 
         User user = authenticatedUserService.getCurrentUser();
@@ -105,6 +107,8 @@ public class MovementServiceImpl implements MovementService {
 
         movement = movementRepository.save(movement);
 
+        applyMovement(movement);
+
         return movementMapper.toResponse(movement);
 
     }
@@ -156,6 +160,7 @@ public class MovementServiceImpl implements MovementService {
     }
 
     @Override
+    @Transactional
     public MovementResponse update(
             UUID id,
             UpdateMovementRequest request
@@ -204,6 +209,8 @@ public class MovementServiceImpl implements MovementService {
             );
         }
 
+        revertMovement(movement);
+
         movement.setMovementType(request.getMovementType());
         movement.setAmount(request.getAmount());
         movement.setDescription(request.getDescription());
@@ -225,11 +232,13 @@ public class MovementServiceImpl implements MovementService {
 
         movement = movementRepository.save(movement);
 
+        applyMovement(movement);
         return movementMapper.toResponse(movement);
 
     }
 
     @Override
+    @Transactional
     public void delete(UUID id) {
 
         User user = authenticatedUserService.getCurrentUser();
@@ -238,7 +247,118 @@ public class MovementServiceImpl implements MovementService {
                 .findByIdAndUserId(id, user.getId())
                 .orElseThrow(MovementNotFoundException::new);
 
+        revertMovement(movement);
+
         movementRepository.delete(movement);
+
+    }
+
+    private void applyMovement(Movement movement) {
+
+        switch (movement.getMovementType()) {
+
+                case INCOME -> {
+
+                        Account account = movement.getAccount();
+
+                        account.setBalance(
+                                account.getBalance().add(movement.getAmount())
+                        );
+
+                        accountRepository.save(account);
+
+                }
+
+                case EXPENSE -> {
+
+                        Account account = movement.getAccount();
+
+                        account.setBalance(
+                                account.getBalance().subtract(movement.getAmount())
+                        );
+
+                        accountRepository.save(account);
+
+                }
+
+                case TRANSFER -> {
+
+                        Account origin = movement.getAccount();
+
+                        Account destination = movement.getDestinationAccount();
+
+                        if (destination == null) {
+                                throw new MovementNotFoundException();
+                        }
+
+                        origin.setBalance(
+                                origin.getBalance().subtract(movement.getAmount())
+                        );
+
+                        destination.setBalance(
+                                destination.getBalance().add(movement.getAmount())
+                        );
+
+                        accountRepository.save(origin);
+                        accountRepository.save(destination);
+
+                }
+
+        }
+
+    }
+
+    private void revertMovement(Movement movement) {
+
+        switch (movement.getMovementType()) {
+
+                case INCOME -> {
+
+                        Account account = movement.getAccount();
+
+                        account.setBalance(
+                                account.getBalance().subtract(movement.getAmount())
+                        );
+
+                        accountRepository.save(account);
+
+                }
+
+                case EXPENSE -> {
+
+                        Account account = movement.getAccount();
+
+                        account.setBalance(
+                                account.getBalance().add(movement.getAmount())
+                        );
+
+                        accountRepository.save(account);
+
+                }
+
+                case TRANSFER -> {
+
+                        Account origin = movement.getAccount();
+                        Account destination = movement.getDestinationAccount();
+
+                        if (destination == null) {
+                                throw new MovementNotFoundException();
+                        }
+                        
+                        origin.setBalance(
+                                origin.getBalance().add(movement.getAmount())
+                        );
+
+                        destination.setBalance(
+                                destination.getBalance().subtract(movement.getAmount())
+                        );
+
+                        accountRepository.save(origin);
+                        accountRepository.save(destination);
+
+                }
+
+        }
 
     }
 

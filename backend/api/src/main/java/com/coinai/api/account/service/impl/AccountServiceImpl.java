@@ -38,14 +38,15 @@ public class AccountServiceImpl implements AccountService {
         }
 
         Account account = Account.builder()
-                .user(user)
-                .name(request.getName())
-                .type(request.getType())
-                .currency(request.getCurrency())
-                .archived(false)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+            .user(user)
+            .name(request.getName())
+            .type(request.getType())
+            .currency(request.getCurrency())
+            .balance(request.getBalance())
+            .archived(false)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .build();
 
         account = accountRepository.save(account);
 

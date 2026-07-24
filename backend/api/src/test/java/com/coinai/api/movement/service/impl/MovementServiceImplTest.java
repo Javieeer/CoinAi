@@ -34,6 +34,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,6 +81,7 @@ class MovementServiceImplTest {
         Account account = Account.builder()
                 .id(accountId)
                 .user(user)
+                .balance(new BigDecimal("100000"))
                 .build();
 
         Category category = Category.builder()
@@ -160,6 +162,10 @@ class MovementServiceImplTest {
 
         MovementResponse result = movementService.create(request);
 
+        assertEquals(
+                new BigDecimal("85000"),
+                account.getBalance()
+        );
         assertEquals(MovementType.EXPENSE, result.getMovementType());
         assertEquals(new BigDecimal("15000"), result.getAmount());
         assertEquals("Almuerzo", result.getDescription());
@@ -227,6 +233,7 @@ class MovementServiceImplTest {
         Account account = Account.builder()
                 .id(accountId)
                 .user(user)
+                .balance(new BigDecimal("100000"))
                 .build();
 
         Category category = Category.builder()
@@ -247,6 +254,9 @@ class MovementServiceImplTest {
         Movement movement = Movement.builder()
                 .id(movementId)
                 .user(user)
+                .account(account)
+                .movementType(MovementType.EXPENSE)
+                .amount(new BigDecimal("10000"))
                 .build();
 
         UpdateMovementRequest request = new UpdateMovementRequest();
@@ -337,14 +347,24 @@ class MovementServiceImplTest {
 
         UUID userId = UUID.randomUUID();
         UUID movementId = UUID.randomUUID();
+        UUID accountId = UUID.randomUUID();
 
         User user = User.builder()
                 .id(userId)
                 .build();
 
+        Account account = Account.builder()
+                .id(accountId)
+                .user(user)
+                .balance(new BigDecimal("100000"))
+                .build();
+
         Movement movement = Movement.builder()
                 .id(movementId)
                 .user(user)
+                .account(account)
+                .movementType(MovementType.EXPENSE)
+                .amount(new BigDecimal("10000"))
                 .build();
 
         when(authenticatedUserService.getCurrentUser())
@@ -357,6 +377,10 @@ class MovementServiceImplTest {
 
         org.mockito.Mockito.verify(movementRepository)
                 .delete(movement);
+        
+        verify(accountRepository).save(account);
+
+        verify(movementRepository).delete(movement);
 
     }
 

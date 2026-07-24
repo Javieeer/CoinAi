@@ -1,10 +1,13 @@
 package com.coinai.api.account.dto.request;
 
 import com.coinai.api.account.AccountType;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+
+import java.math.BigDecimal;
 
 @Data
 public class CreateAccountRequest {
@@ -19,5 +22,9 @@ public class CreateAccountRequest {
     @NotBlank
     @Size(max = 10)
     private String currency;
+
+    @NotNull
+    @DecimalMin("0.00")
+    private BigDecimal balance;
 
 }

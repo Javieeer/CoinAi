@@ -5,6 +5,7 @@ import com.coinai.api.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -38,6 +39,9 @@ public class Account {
 
     @Column(nullable = false, length = 10)
     private String currency;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal balance;
 
     @Column(nullable = false)
     private boolean archived;

@@ -5,7 +5,7 @@ public enum PaymentMethodType {
     CASH,
     DEBIT_CARD,
     CREDIT_CARD,
-    BANK_TRANSFER,
+    BANK_ACCOUNT,
     PSE,
     QR,
     NFC,
