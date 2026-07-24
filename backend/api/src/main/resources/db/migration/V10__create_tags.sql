@@ -1,5 +1,6 @@
 CREATE TABLE tags (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    id UUID PRIMARY KEY,
 
     user_id UUID NOT NULL,
 
@@ -7,10 +8,16 @@ CREATE TABLE tags (
 
     color VARCHAR(20),
 
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL,
 
-    CONSTRAINT fk_tag_user
+    updated_at TIMESTAMP NOT NULL,
+
+    CONSTRAINT fk_tags_user
         FOREIGN KEY (user_id)
         REFERENCES users(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT uk_tag_user_name
+        UNIQUE (user_id, name)
+
 );
