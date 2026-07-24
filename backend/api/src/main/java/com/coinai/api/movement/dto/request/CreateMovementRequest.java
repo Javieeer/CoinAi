@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -40,6 +41,8 @@ public class CreateMovementRequest {
     private UUID categoryId;
 
     private UUID subcategoryId;
+
+    private Set<UUID> tagIds;
 
     @NotNull
     private MovementVisibility visibility;

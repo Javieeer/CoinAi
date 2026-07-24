@@ -29,6 +29,7 @@ import com.coinai.api.paymentMethods.exception.PaymentMethodNotFoundException;
 import com.coinai.api.subcategory.exception.SubcategoryAlreadyExistsException;
 import com.coinai.api.subcategory.exception.SubcategoryNotFoundException;
 import com.coinai.api.tag.exception.TagAlreadyExistsException;
+import com.coinai.api.tag.exception.TagNotFoundException;
 import com.coinai.api.user.exception.EmailAlreadyExistsException;
 import com.coinai.api.budget.exception.BudgetAlreadyExistsException;
 import com.coinai.api.budget.exception.BudgetNotFoundException;
@@ -480,4 +481,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
 
         }
+
+        @ExceptionHandler(TagNotFoundException.class)
+        public ResponseEntity<Map<String, Object>> handleTagNotFoundException(
+                TagNotFoundException ex,
+                HttpServletRequest request
+        ) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.NOT_FOUND.value());
+        response.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
+        response.put("message", ex.getMessage());
+        response.put("path", request.getRequestURI());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+        }
+        
 }

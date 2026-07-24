@@ -1,15 +1,3 @@
-ALTER TABLE movement_tags
-ADD CONSTRAINT fk_movement_tags_movement
-FOREIGN KEY (movement_id)
-REFERENCES movements(id)
-ON DELETE CASCADE;
-
-ALTER TABLE movement_tags
-ADD CONSTRAINT fk_movement_tags_tag
-FOREIGN KEY (tag_id)
-REFERENCES tags(id)
-ON DELETE CASCADE;
-
 CREATE TABLE transfer_details (
     movement_id UUID PRIMARY KEY,
 

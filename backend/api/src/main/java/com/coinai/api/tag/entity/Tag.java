@@ -1,11 +1,14 @@
 package com.coinai.api.tag.entity;
 
+import com.coinai.api.movement.entity.Movement;
 import com.coinai.api.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.UUID;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -40,6 +43,10 @@ public class Tag {
 
     @Column(length = 20)
     private String color;
+
+    @ManyToMany(mappedBy = "tags")
+    @Builder.Default
+    private Set<Movement> movements = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

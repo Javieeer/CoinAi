@@ -17,14 +17,19 @@ import com.coinai.api.paymentMethods.repository.PaymentMethodRepository;
 import com.coinai.api.security.service.AuthenticatedUserService;
 import com.coinai.api.subcategory.entity.Subcategory;
 import com.coinai.api.subcategory.repository.SubcategoryRepository;
+import com.coinai.api.tag.entity.Tag;
+import com.coinai.api.tag.exception.TagNotFoundException;
+import com.coinai.api.tag.repository.TagRepository;
 import com.coinai.api.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -32,12 +37,11 @@ public class MovementServiceImpl implements MovementService {
 
     private final MovementRepository movementRepository;
     private final MovementMapper movementMapper;
-
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
     private final PaymentMethodRepository paymentMethodRepository;
     private final SubcategoryRepository subcategoryRepository;
-
+    private final TagRepository tagRepository;
     private final AuthenticatedUserService authenticatedUserService;
 
     @Override
@@ -93,6 +97,11 @@ public class MovementServiceImpl implements MovementService {
 
         }
 
+        Set<Tag> tags = getTags(
+                request.getTagIds(),
+                user.getId()
+        );
+
         Movement movement = movementMapper.toEntity(request);
 
         movement.setUser(user);
@@ -101,6 +110,7 @@ public class MovementServiceImpl implements MovementService {
         movement.setCategory(category);
         movement.setPaymentMethod(paymentMethod);
         movement.setSubcategory(subcategory);
+        movement.setTags(tags);
 
         movement.setCreatedAt(LocalDateTime.now());
         movement.setUpdatedAt(LocalDateTime.now());
@@ -159,6 +169,32 @@ public class MovementServiceImpl implements MovementService {
 
     }
 
+
+    private Set<Tag> getTags(
+        Set<UUID> tagIds,
+        UUID userId
+    ) {
+
+        if (tagIds == null || tagIds.isEmpty()) {
+                return new HashSet<>();
+        }
+
+        Set<Tag> tags = new HashSet<>();
+
+        for (UUID tagId : tagIds) {
+
+                Tag tag = tagRepository
+                        .findByIdAndUserId(tagId, userId)
+                        .orElseThrow(TagNotFoundException::new);
+
+                tags.add(tag);
+
+        }
+
+        return tags;
+
+    }
+
     @Override
     @Transactional
     public MovementResponse update(
@@ -209,6 +245,11 @@ public class MovementServiceImpl implements MovementService {
             );
         }
 
+        Set<Tag> tags = getTags(
+                request.getTagIds(),
+                user.getId()
+        );
+
         revertMovement(movement);
 
         movement.setMovementType(request.getMovementType());
@@ -223,6 +264,7 @@ public class MovementServiceImpl implements MovementService {
         movement.setSubcategory(subcategory);
 
         movement.setPaymentMethod(paymentMethod);
+        movement.setTags(tags);
 
         movement.setVisibility(request.getVisibility());
         movement.setStatus(request.getStatus());
@@ -361,5 +403,6 @@ public class MovementServiceImpl implements MovementService {
         }
 
     }
+
 
 }

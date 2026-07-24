@@ -9,6 +9,7 @@ import com.coinai.api.movement.MovementVisibility;
 import com.coinai.api.paymentMethods.entity.PaymentMethod;
 import com.coinai.api.subcategory.entity.Subcategory;
 import com.coinai.api.user.entity.User;
+import com.coinai.api.tag.entity.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -16,6 +17,8 @@ import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -83,6 +86,16 @@ public class Movement {
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false)
     private MovementSource source;
+
+    @ManyToMany
+    @JoinTable(
+            name = "movement_tags",
+            joinColumns = @JoinColumn(name = "movement_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    
+    @Builder.Default
+    private Set<Tag> tags = new HashSet<>();
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
