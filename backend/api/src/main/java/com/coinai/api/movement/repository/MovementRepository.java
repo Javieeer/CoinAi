@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.coinai.api.movement.MovementType;
 import com.coinai.api.movement.entity.Movement;
@@ -58,10 +59,21 @@ public interface MovementRepository extends JpaRepository<Movement, UUID> {
         AND m.movementDate BETWEEN :start AND :end
     """)
     BigDecimal sumAmountByUserAndCategoryAndTypeAndDateBetween(
-            UUID userId,
-            UUID categoryId,
-            MovementType movementType,
-            LocalDateTime start,
-            LocalDateTime end
+            @Param("userId") UUID userId,
+            @Param("categoryId") UUID categoryId,
+            @Param("movementType") MovementType movementType,
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end
+    );
+
+    @Query("""
+        SELECT COALESCE(SUM(m.amount), 0)
+        FROM Movement m
+        WHERE m.account.id = :accountId
+        AND m.movementType = :movementType
+    """)
+    BigDecimal sumAmountByAccountIdAndMovementType(
+            @Param("accountId") UUID accountId,
+            @Param("movementType") MovementType movementType
     );
 }

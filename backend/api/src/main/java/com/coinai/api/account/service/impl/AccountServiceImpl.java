@@ -2,6 +2,7 @@ package com.coinai.api.account.service.impl;
 
 import com.coinai.api.account.dto.request.CreateAccountRequest;
 import com.coinai.api.account.dto.request.UpdateAccountRequest;
+import com.coinai.api.account.dto.response.AccountBalanceResponse;
 import com.coinai.api.account.dto.response.AccountResponse;
 import com.coinai.api.account.entity.Account;
 import com.coinai.api.account.exception.AccountAlreadyExistsException;
@@ -9,11 +10,14 @@ import com.coinai.api.account.exception.AccountNotFoundException;
 import com.coinai.api.account.mapper.AccountMapper;
 import com.coinai.api.account.repository.AccountRepository;
 import com.coinai.api.account.service.AccountService;
+import com.coinai.api.movement.MovementType;
+import com.coinai.api.movement.repository.MovementRepository;
 import com.coinai.api.security.service.AuthenticatedUserService;
 import com.coinai.api.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +31,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
     private final AuthenticatedUserService authenticatedUserService;
+    private final MovementRepository movementRepository;
 
     @Override
     public AccountResponse create(CreateAccountRequest request) {
@@ -102,4 +107,35 @@ public class AccountServiceImpl implements AccountService {
 
     }
     
+    @Override
+    public AccountBalanceResponse getBalance(UUID accountId) {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        Account account = accountRepository
+                .findByIdAndUserId(accountId, user.getId())
+                .orElseThrow(AccountNotFoundException::new);
+
+        BigDecimal totalIncome =
+                movementRepository.sumAmountByAccountIdAndMovementType(
+                        accountId,
+                        MovementType.INCOME
+                );
+
+        BigDecimal totalExpense =
+                movementRepository.sumAmountByAccountIdAndMovementType(
+                        accountId,
+                        MovementType.EXPENSE
+                );
+
+        return AccountBalanceResponse.builder()
+                .accountId(account.getId())
+                .accountName(account.getName())
+                .currentBalance(account.getBalance())
+                .totalIncome(totalIncome)
+                .totalExpense(totalExpense)
+                .build();
+
+    }
+
 }
