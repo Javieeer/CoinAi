@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/families")
 @RequiredArgsConstructor
@@ -59,6 +61,16 @@ public class FamilyController {
     public void leave() {
 
         familyService.leave();
+
+    }
+
+    @DeleteMapping("/members/{memberId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removeMember(
+            @PathVariable UUID memberId
+    ) {
+
+        familyService.removeMember(memberId);
 
     }
 

@@ -18,6 +18,7 @@ import com.coinai.api.category.exception.CategoryAlreadyExistsException;
 import com.coinai.api.category.exception.CategoryDeletionNotAllowedException;
 import com.coinai.api.category.exception.CategoryModificationNotAllowedException;
 import com.coinai.api.category.exception.CategoryNotFoundException;
+import com.coinai.api.family.exception.CannotRemoveMemberException;
 import com.coinai.api.family.exception.FamilyAlreadyExistsException;
 import com.coinai.api.family.exception.FamilyNotFoundException;
 import com.coinai.api.family.exception.FamilyOwnerCannotLeaveException;
@@ -440,6 +441,24 @@ public class GlobalExceptionHandler {
         response.put("fields", errors);
 
         return ResponseEntity.badRequest().body(response);
+
+        }
+        
+        @ExceptionHandler(CannotRemoveMemberException.class)
+        public ResponseEntity<ErrorResponse> handleCannotRemoveMember(
+                CannotRemoveMemberException ex,
+                HttpServletRequest request
+        ) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
 
         }
         

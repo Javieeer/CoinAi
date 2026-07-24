@@ -8,6 +8,7 @@ import com.coinai.api.family.dto.request.UpdateFamilyRequest;
 import com.coinai.api.family.dto.response.FamilyResponse;
 import com.coinai.api.family.entity.Family;
 import com.coinai.api.family.entity.FamilyMember;
+import com.coinai.api.family.exception.CannotRemoveMemberException;
 import com.coinai.api.family.exception.FamilyAlreadyExistsException;
 import com.coinai.api.family.exception.FamilyNotFoundException;
 import com.coinai.api.family.mapper.FamilyMapper;
@@ -195,4 +196,40 @@ public class FamilyServiceImpl implements FamilyService {
 
     }
 
+    @Override
+    public void removeMember(UUID memberId) {
+
+        User currentUser = authenticatedUserService.getCurrentUser();
+
+        FamilyMember admin = familyMemberRepository.findByUserId(currentUser.getId())
+                .orElseThrow(FamilyNotFoundException::new);
+
+        if (admin.getRole() != FamilyRole.ADMIN) {
+            throw new CannotRemoveMemberException();
+        }
+
+        FamilyMember member = familyMemberRepository.findById(memberId)
+                .orElseThrow(FamilyNotFoundException::new);
+
+        if (!member.getFamily().getId().equals(admin.getFamily().getId())) {
+            throw new CannotRemoveMemberException();
+        }
+
+        if (member.getUser().getId().equals(currentUser.getId())) {
+            throw new CannotRemoveMemberException();
+        }
+
+        if (member.getRole() == FamilyRole.ADMIN) {
+            throw new CannotRemoveMemberException();
+        }
+
+        familyMemberRepository.delete(member);
+
+        Family family = admin.getFamily();
+
+        family.setUpdatedAt(LocalDateTime.now());
+
+        familyRepository.save(family);
+
+    }
 }
