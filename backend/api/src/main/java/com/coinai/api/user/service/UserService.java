@@ -1,5 +1,7 @@
 package com.coinai.api.user.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.coinai.api.user.dto.request.RegisterRequest;
 import com.coinai.api.user.dto.request.UpdateProfileRequest;
 import com.coinai.api.user.dto.response.RegisterResponse;
@@ -11,6 +13,10 @@ public interface UserService {
 
     UpdateProfileResponse updateProfile(
             UpdateProfileRequest request
+    );
+
+    UpdateProfileResponse uploadProfilePicture(
+            MultipartFile file
     );
 
 }

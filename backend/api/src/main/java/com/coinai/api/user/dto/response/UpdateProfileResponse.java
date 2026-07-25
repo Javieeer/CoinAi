@@ -13,6 +13,8 @@ public class UpdateProfileResponse {
 
     private String email;
 
+    private String profilePictureUrl;
+
     private String preferredCurrency;
 
     private String timezone;

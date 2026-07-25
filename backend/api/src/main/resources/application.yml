@@ -44,3 +44,8 @@ google:
   client-id: ${GOOGLE_CLIENT_ID}
   client-secret: ${GOOGLE_CLIENT_SECRET}
   redirect-uri: http://localhost:8080/api/v1/google/callback
+
+cloudinary:
+  cloud-name: ${CLOUD_NAME}
+  api-key: ${CLOUD_API_KEY}
+  api-secret: ${CLOUD_API_SECRET}

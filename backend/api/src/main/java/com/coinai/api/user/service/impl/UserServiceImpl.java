@@ -1,5 +1,6 @@
 package com.coinai.api.user.service.impl;
 
+import com.coinai.api.cloudinary.ImageStorageService;
 import com.coinai.api.security.service.AuthenticatedUserService;
 import com.coinai.api.user.dto.request.RegisterRequest;
 import com.coinai.api.user.dto.request.UpdateProfileRequest;
@@ -13,6 +14,7 @@ import com.coinai.api.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final UserMapper mapper;
     private final AuthenticatedUserService authenticatedUserService;
+    private final ImageStorageService imageStorageService;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -59,6 +62,31 @@ public class UserServiceImpl implements UserService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
+                .preferredCurrency(user.getPreferredCurrency())
+                .timezone(user.getTimezone())
+                .profilePictureUrl(user.getProfilePictureUrl())
+                .build();
+
+    }
+
+    @Override
+    public UpdateProfileResponse uploadProfilePicture(
+            MultipartFile file
+    ) {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        String url = imageStorageService.upload(file);
+
+        user.setProfilePictureUrl(url);
+
+        repository.save(user);
+
+        return UpdateProfileResponse.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .profilePictureUrl(user.getProfilePictureUrl())
                 .preferredCurrency(user.getPreferredCurrency())
                 .timezone(user.getTimezone())
                 .build();
