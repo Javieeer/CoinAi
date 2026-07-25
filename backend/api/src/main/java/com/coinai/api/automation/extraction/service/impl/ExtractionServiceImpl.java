@@ -24,7 +24,10 @@ public class ExtractionServiceImpl implements ExtractionService {
 
         String response = aiClient.chat(prompt);
 
-        return parser.parse(response);
+        return parser.parse(
+                response,
+                MovementExtractionResult.class
+        );
 
     }
 

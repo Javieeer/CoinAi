@@ -1,6 +1,5 @@
 package com.coinai.api.automation.parser;
 
-import com.coinai.api.automation.extraction.dto.MovementExtractionResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -11,13 +10,16 @@ public class AIResponseParser {
 
     private final ObjectMapper objectMapper;
 
-    public MovementExtractionResult parse(String response) {
+    public <T> T parse(
+            String response,
+            Class<T> clazz
+    ) {
 
         try {
 
             return objectMapper.readValue(
                     response,
-                    MovementExtractionResult.class
+                    clazz
             );
 
         } catch (Exception e) {

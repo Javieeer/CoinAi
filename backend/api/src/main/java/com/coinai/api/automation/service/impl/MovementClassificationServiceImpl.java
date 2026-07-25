@@ -28,7 +28,10 @@ public class MovementClassificationServiceImpl
         );
 
         MovementExtractionResult result =
-                parser.parse(aiResponse);
+                parser.parse(
+                        aiResponse,
+                        MovementExtractionResult.class
+                );
 
         return FreeTextClassificationResponse.builder()
                 .movementType(result.getMovementType())
