@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableScheduling
+/* @EnableScheduling */
 @EnableConfigurationProperties(JwtProperties.class)
 public class ApiApplication {
 

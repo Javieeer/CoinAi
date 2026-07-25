@@ -2,8 +2,6 @@ package com.coinai.api.automation.openai;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.openai.client.OpenAIClient;
-import com.openai.models.ChatModel;
 import com.openai.models.responses.ResponseCreateParams;
 import com.openai.models.responses.Response;
 
