@@ -4,6 +4,9 @@ import com.coinai.api.dashboard.dto.response.CategoryUsageResponse;
 import com.coinai.api.dashboard.dto.response.DashboardResponse;
 import com.coinai.api.dashboard.dto.response.FamilyDashboardResponse;
 import com.coinai.api.dashboard.dto.response.FamilyMemberParticipationResponse;
+import com.coinai.api.dashboard.dto.response.BarChartResponse;
+import com.coinai.api.dashboard.dto.response.MonthlyTrendResponse;
+import com.coinai.api.dashboard.dto.response.PieChartResponse;
 import com.coinai.api.dashboard.service.DashboardService;
 import com.coinai.api.family.entity.Family;
 import com.coinai.api.family.entity.FamilyMember;
@@ -16,8 +19,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -149,6 +155,107 @@ public class DashboardServiceImpl implements DashboardService {
                 .members(participation)
                 .expensesByCategory(categories)
                 .build();
+
+    }
+
+    @Override
+    public BarChartResponse getBarChart() {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        BigDecimal income = movementRepository.sumAmountByUserIdAndMovementType(
+                user.getId(),
+                MovementType.INCOME
+        );
+
+        BigDecimal expense = movementRepository.sumAmountByUserIdAndMovementType(
+                user.getId(),
+                MovementType.EXPENSE
+        );
+
+        return BarChartResponse.builder()
+                .income(income)
+                .expense(expense)
+                .build();
+
+    }
+
+    @Override
+    public List<PieChartResponse> getPieChart() {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        return movementRepository
+                .getPieChart(
+                        user.getId(),
+                        MovementType.EXPENSE
+                )
+                .stream()
+                .map(row -> PieChartResponse.builder()
+                        .categoryId((UUID) row[0])
+                        .categoryName((String) row[1])
+                        .amount((BigDecimal) row[2])
+                        .build())
+                .toList();
+
+    }
+
+    @Override
+    public List<MonthlyTrendResponse> getMonthlyTrend() {
+
+        User user = authenticatedUserService.getCurrentUser();
+
+        List<Object[]> incomes = movementRepository.getMonthlyTrend(
+                user.getId(),
+                MovementType.INCOME
+        );
+
+        List<Object[]> expenses = movementRepository.getMonthlyTrend(
+                user.getId(),
+                MovementType.EXPENSE
+        );
+
+        Map<String, MonthlyTrendResponse> result = new LinkedHashMap<>();
+
+        for (Object[] row : incomes) {
+
+                int year = ((Number) row[0]).intValue();
+                int month = ((Number) row[1]).intValue();
+
+                String key = year + "-" + month;
+
+                result.put(
+                        key,
+                        MonthlyTrendResponse.builder()
+                                .year(year)
+                                .month(month)
+                                .income((BigDecimal) row[2])
+                                .expense(BigDecimal.ZERO)
+                                .build()
+                );
+        }
+
+        for (Object[] row : expenses) {
+
+                int year = ((Number) row[0]).intValue();
+                int month = ((Number) row[1]).intValue();
+
+                String key = year + "-" + month;
+
+                MonthlyTrendResponse response = result.computeIfAbsent(
+                        key,
+                        k -> MonthlyTrendResponse.builder()
+                                .year(year)
+                                .month(month)
+                                .income(BigDecimal.ZERO)
+                                .expense(BigDecimal.ZERO)
+                                .build()
+                );
+
+                response.setExpense((BigDecimal) row[2]);
+        }
+
+        return result.values().stream().toList();
 
     }
 }

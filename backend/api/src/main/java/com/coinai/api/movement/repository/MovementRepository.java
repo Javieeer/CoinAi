@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.coinai.api.movement.MovementType;
 import com.coinai.api.movement.entity.Movement;
+import com.coinai.api.dashboard.dto.response.BarChartResponse;
 
 public interface MovementRepository extends JpaRepository<Movement, UUID> {
 
@@ -138,6 +139,44 @@ public interface MovementRepository extends JpaRepository<Movement, UUID> {
         AND m.movementType = :movementType
     """)
     BigDecimal sumAmountByUserIdAndMovementType(
+            UUID userId,
+            MovementType movementType
+    );
+    
+    @Query("""
+        SELECT
+            m.category.id,
+            m.category.name,
+            COALESCE(SUM(m.amount),0)
+        FROM Movement m
+        WHERE m.user.id = :userId
+        AND m.movementType = :movementType
+        GROUP BY
+            m.category.id,
+            m.category.name
+        ORDER BY SUM(m.amount) DESC
+    """)
+    List<Object[]> getPieChart(
+            UUID userId,
+            MovementType movementType
+    );
+
+    @Query("""
+        SELECT
+            YEAR(m.movementDate),
+            MONTH(m.movementDate),
+            COALESCE(SUM(m.amount),0)
+        FROM Movement m
+        WHERE m.user.id = :userId
+        AND m.movementType = :movementType
+        GROUP BY
+            YEAR(m.movementDate),
+            MONTH(m.movementDate)
+        ORDER BY
+            YEAR(m.movementDate),
+            MONTH(m.movementDate)
+    """)
+    List<Object[]> getMonthlyTrend(
             UUID userId,
             MovementType movementType
     );
