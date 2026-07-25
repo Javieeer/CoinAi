@@ -102,4 +102,44 @@ public interface MovementRepository extends JpaRepository<Movement, UUID> {
     """)
     List<Object[]> findTopCategories(UUID userId);
 
+    @Query("""
+        SELECT COALESCE(SUM(m.amount), 0)
+        FROM Movement m
+        WHERE m.user.id IN :userIds
+        AND m.movementType = :movementType
+    """)
+    BigDecimal sumAmountByUserIdsAndMovementType(
+            List<UUID> userIds,
+            MovementType movementType
+    );
+
+    @Query("""
+        SELECT
+            m.category.id,
+            m.category.name,
+            COUNT(m)
+        FROM Movement m
+        WHERE m.user.id IN :userIds
+        AND m.movementType = :movementType
+        GROUP BY
+            m.category.id,
+            m.category.name
+        ORDER BY COUNT(m) DESC
+    """)
+    List<Object[]> findTopCategoriesByUserIds(
+            List<UUID> userIds,
+            MovementType movementType
+    );
+
+    @Query("""
+        SELECT COALESCE(SUM(m.amount), 0)
+        FROM Movement m
+        WHERE m.user.id = :userId
+        AND m.movementType = :movementType
+    """)
+    BigDecimal sumAmountByUserIdAndMovementType(
+            UUID userId,
+            MovementType movementType
+    );
+    
 }

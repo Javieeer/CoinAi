@@ -1,6 +1,7 @@
 package com.coinai.api.dashboard.controller;
 
 import com.coinai.api.dashboard.dto.response.DashboardResponse;
+import com.coinai.api.dashboard.dto.response.FamilyDashboardResponse;
 import com.coinai.api.dashboard.service.DashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,4 +20,8 @@ public class DashboardController {
         return dashboardService.getDashboard();
     }
 
+    @GetMapping("/family")
+    public FamilyDashboardResponse getFamilyDashboard() {
+        return dashboardService.getFamilyDashboard();
+    }
 }
