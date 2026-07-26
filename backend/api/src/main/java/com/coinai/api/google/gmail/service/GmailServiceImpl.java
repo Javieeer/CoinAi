@@ -8,7 +8,7 @@ import com.coinai.api.automation.movement.dto.MovementDraft;
 import com.coinai.api.automation.movement.importer.MovementImportService;
 import com.coinai.api.automation.email.service.ProcessedEmailService;
 import com.coinai.api.google.entity.GoogleCredential;
-import com.coinai.api.google.gmail.cleaner.EmailBodyCleaner;
+/* import com.coinai.api.google.gmail.cleaner.EmailBodyCleaner; */
 import com.coinai.api.google.gmail.cleaner.EmailBodyCleanerFactory;
 import com.coinai.api.google.gmail.dto.GmailMessageResponse;
 import com.coinai.api.google.gmail.provider.EmailProviderService;
@@ -36,7 +36,7 @@ public class GmailServiceImpl implements GmailService {
     private final BankDetector bankDetector;
     private final EmailProviderService emailProviderService;
     private final GmailBodyExtractor gmailBodyExtractor;
-    private final EmailBodyCleaner emailBodyCleaner;
+    /* private final EmailBodyCleaner emailBodyCleaner; */
     private final EmailParserFactory emailParserFactory;
     private final EmailBodyCleanerFactory emailBodyCleanerFactory;
     private final ProcessedEmailService processedEmailService;

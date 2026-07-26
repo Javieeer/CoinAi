@@ -11,7 +11,6 @@ import com.coinai.api.user.entity.User;
 import lombok.RequiredArgsConstructor;
 
 import java.net.URI;
-import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
