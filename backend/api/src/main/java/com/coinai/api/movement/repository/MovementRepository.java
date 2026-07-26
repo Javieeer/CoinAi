@@ -9,12 +9,14 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import com.coinai.api.movement.MovementType;
 import com.coinai.api.movement.entity.Movement;
-import com.coinai.api.dashboard.dto.response.BarChartResponse;
 
-public interface MovementRepository extends JpaRepository<Movement, UUID> {
+public interface MovementRepository extends
+        JpaRepository<Movement, UUID>,
+        JpaSpecificationExecutor<Movement> {
 
     List<Movement> findByUserIdOrderByMovementDateDesc(UUID userId);
 

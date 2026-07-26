@@ -9,6 +9,8 @@ import com.coinai.api.movement.dto.request.UpdateMovementRequest;
 import com.coinai.api.movement.dto.response.MovementResponse;
 import com.coinai.api.movement.entity.Movement;
 import com.coinai.api.movement.exception.MovementNotFoundException;
+import com.coinai.api.movement.filter.MovementFilterRequest;
+import com.coinai.api.movement.filter.MovementSpecification;
 import com.coinai.api.movement.mapper.MovementMapper;
 import com.coinai.api.movement.repository.MovementRepository;
 import com.coinai.api.movement.service.MovementService;
@@ -22,6 +24,8 @@ import com.coinai.api.tag.exception.TagNotFoundException;
 import com.coinai.api.tag.repository.TagRepository;
 import com.coinai.api.user.entity.User;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -124,14 +128,23 @@ public class MovementServiceImpl implements MovementService {
     }
 
     @Override
-    public List<MovementResponse> findAll() {
+    public List<MovementResponse> findAll(
+        MovementFilterRequest filter
+    ) {
 
         User user = authenticatedUserService.getCurrentUser();
 
+        filter.setUserId(user.getId());
+
+        Specification<Movement> specification =
+                MovementSpecification.withFilters(filter);
+
         List<Movement> movements =
-                movementRepository.findByUserIdOrderByMovementDateDesc(
-                        user.getId()
-                );
+                movementRepository.findAll(specification);
+
+        movements.sort(
+                (a, b) -> b.getMovementDate().compareTo(a.getMovementDate())
+        );
 
         return movementMapper.toResponseList(movements);
 
