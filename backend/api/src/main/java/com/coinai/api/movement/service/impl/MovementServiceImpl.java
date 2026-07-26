@@ -23,6 +23,7 @@ import com.coinai.api.tag.entity.Tag;
 import com.coinai.api.tag.exception.TagNotFoundException;
 import com.coinai.api.tag.repository.TagRepository;
 import com.coinai.api.user.entity.User;
+import com.coinai.api.notification.service.BudgetAlertService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.jpa.domain.Specification;
@@ -47,6 +48,7 @@ public class MovementServiceImpl implements MovementService {
     private final SubcategoryRepository subcategoryRepository;
     private final TagRepository tagRepository;
     private final AuthenticatedUserService authenticatedUserService;
+    private final BudgetAlertService budgetAlertService;
 
     @Override
     @Transactional
@@ -122,6 +124,8 @@ public class MovementServiceImpl implements MovementService {
         movement = movementRepository.save(movement);
 
         applyMovement(movement);
+
+        budgetAlertService.checkBudgetAlerts(movement);
 
         return movementMapper.toResponse(movement);
 

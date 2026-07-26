@@ -30,15 +30,21 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
     );
 
     List<Budget> findByUserIdAndMonthAndYear(
-            UUID userId,
-            Short month,
-            Short year
+        UUID userId,
+        Short month,
+        Short year
     );
 
     List<Budget> findByFamilyIdAndMonthAndYear(
-            UUID familyId,
-            Short month,
-            Short year
+        UUID familyId,
+        Short month,
+        Short year
     );
 
+    Optional<Budget> findByUserIdAndCategoryIdAndMonthAndYear(
+        UUID userId,
+        UUID categoryId,
+        Short month,
+        Short year
+    );
 }

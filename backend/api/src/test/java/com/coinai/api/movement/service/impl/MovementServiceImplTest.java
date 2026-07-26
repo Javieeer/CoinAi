@@ -14,6 +14,8 @@ import com.coinai.api.movement.dto.response.MovementResponse;
 import com.coinai.api.movement.entity.Movement;
 import com.coinai.api.movement.mapper.MovementMapper;
 import com.coinai.api.movement.repository.MovementRepository;
+import com.coinai.api.notification.service.BudgetAlertService;
+import com.coinai.api.movement.filter.MovementFilterRequest;
 import com.coinai.api.paymentMethods.entity.PaymentMethod;
 import com.coinai.api.paymentMethods.repository.PaymentMethodRepository;
 import com.coinai.api.security.service.AuthenticatedUserService;
@@ -25,9 +27,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,6 +64,9 @@ class MovementServiceImplTest {
 
     @Mock
     private AuthenticatedUserService authenticatedUserService;
+
+    @Mock
+    private BudgetAlertService budgetAlertService;
 
     @InjectMocks
     private MovementServiceImpl movementService;
@@ -181,14 +188,16 @@ class MovementServiceImplTest {
                 .id(userId)
                 .build();
 
-        List<Movement> movements = List.of(
+        List<Movement> movements = new ArrayList<>(List.of(
                 Movement.builder()
                         .description("Movimiento 1")
+                        .movementDate(LocalDateTime.now())
                         .build(),
                 Movement.builder()
                         .description("Movimiento 2")
+                        .movementDate(LocalDateTime.now().minusDays(1))
                         .build()
-        );
+        ));
 
         List<MovementResponse> responses = List.of(
                 MovementResponse.builder()
@@ -202,13 +211,15 @@ class MovementServiceImplTest {
         when(authenticatedUserService.getCurrentUser())
                 .thenReturn(user);
 
-        when(movementRepository.findByUserIdOrderByMovementDateDesc(userId))
+        when(movementRepository.findAll(org.mockito.ArgumentMatchers.<Specification<Movement>>any()))
                 .thenReturn(movements);
 
         when(movementMapper.toResponseList(movements))
                 .thenReturn(responses);
 
-        List<MovementResponse> result = movementService.findAll();
+        MovementFilterRequest filter = MovementFilterRequest.builder().build();
+
+        List<MovementResponse> result = movementService.findAll(filter);
 
         assertEquals(2, result.size());
         assertEquals("Movimiento 1", result.get(0).getDescription());
