@@ -4,8 +4,10 @@ import com.coinai.api.auth.entity.PasswordResetToken;
 import com.coinai.api.auth.exception.InvalidTokenException;
 import com.coinai.api.auth.repository.PasswordResetTokenRepository;
 import com.coinai.api.auth.service.PasswordResetService;
+import com.coinai.api.email.service.EmailService;
 import com.coinai.api.user.repository.UserRepository;
 import com.coinai.api.user.entity.User;
+import com.resend.core.exception.ResendException;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -20,10 +22,9 @@ public class PasswordResetServiceImpl
         implements PasswordResetService {
 
     private final PasswordResetTokenRepository repository;
-
     private final UserRepository userRepository;
-
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Override
     public void createResetToken(String email) {
@@ -33,18 +34,34 @@ public class PasswordResetServiceImpl
 
                     repository.deleteByUser(user);
 
-                    PasswordResetToken resetToken =
-                            PasswordResetToken.builder()
-                                    .user(user)
-                                    .token(UUID.randomUUID().toString())
-                                    .createdAt(LocalDateTime.now())
-                                    .expiresAt(
-                                            LocalDateTime.now()
-                                                    .plusMinutes(15)
-                                    )
-                                    .build();
+                    String token = UUID.randomUUID().toString();
 
-                    repository.save(resetToken);
+                        PasswordResetToken resetToken =
+                                PasswordResetToken.builder()
+                                        .user(user)
+                                        .token(token)
+                                        .createdAt(LocalDateTime.now())
+                                        .expiresAt(
+                                                LocalDateTime.now()
+                                                        .plusMinutes(15)
+                                        )
+                                        .build();
+
+                        repository.save(resetToken);
+
+                        try {
+
+                                emailService.sendPasswordRecoveryEmail(
+                                        user.getEmail(),
+                                        user.getFirstName(),
+                                        "http://localhost:3000/reset-password?token=" + token
+                                );
+
+                        } catch (ResendException e) {
+
+                                throw new RuntimeException("Error sending recovery email", e);
+
+                        }
 
                 });
 
