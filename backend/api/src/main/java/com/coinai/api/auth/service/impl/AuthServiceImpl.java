@@ -4,7 +4,9 @@ import com.coinai.api.auth.dto.request.LoginRequest;
 import com.coinai.api.auth.dto.request.RefreshTokenRequest;
 import com.coinai.api.auth.dto.response.LoginResponse;
 import com.coinai.api.auth.dto.response.RefreshTokenResponse;
+import com.coinai.api.auth.exception.EmailNotVerifiedException;
 import com.coinai.api.auth.exception.InvalidCredentialsException;
+import com.coinai.api.auth.exception.EmailNotVerifiedException;
 import com.coinai.api.auth.service.AuthService;
 import com.coinai.api.auth.service.RefreshTokenService;
 import com.coinai.api.user.entity.User;
@@ -32,6 +34,10 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(InvalidCredentialsException::new);
+
+        if (!Boolean.TRUE.equals(user.getEmailVerified())) {
+                throw new EmailNotVerifiedException();
+        }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new InvalidCredentialsException();

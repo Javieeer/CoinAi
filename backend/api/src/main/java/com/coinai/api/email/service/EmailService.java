@@ -10,4 +10,10 @@ public interface EmailService {
             String recoveryLink
     ) throws ResendException;
 
+    void sendVerificationEmail(
+            String to,
+            String firstName,
+            String verificationLink
+    ) throws Exception;
+
 }

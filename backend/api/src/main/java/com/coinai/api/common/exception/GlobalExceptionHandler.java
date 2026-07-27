@@ -7,11 +7,13 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.coinai.api.account.exception.AccountAlreadyExistsException;
 import com.coinai.api.account.exception.AccountNotFoundException;
+import com.coinai.api.auth.exception.EmailNotVerifiedException;
 import com.coinai.api.auth.exception.InvalidCredentialsException;
 import com.coinai.api.auth.exception.InvalidTokenException;
 import com.coinai.api.category.exception.CategoryAlreadyExistsException;
@@ -379,7 +381,7 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
                 ex.getMessage(),
-                request.getRequestURI()
+                request.getRequestURI() 
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
@@ -497,6 +499,24 @@ public class GlobalExceptionHandler {
         response.put("path", request.getRequestURI());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+        }
+
+        @ExceptionHandler(EmailNotVerifiedException.class)
+        public ResponseEntity<ErrorResponse> handleEmailNotVerified(
+                EmailNotVerifiedException ex,
+                HttpServletRequest request
+        ) {
+
+                ErrorResponse response = new ErrorResponse(
+                        LocalDateTime.now(),
+                        HttpStatus.FORBIDDEN.value(),
+                        HttpStatus.FORBIDDEN.getReasonPhrase(),
+                        ex.getMessage(),
+                        request.getRequestURI()
+                );
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
 
         }
         
