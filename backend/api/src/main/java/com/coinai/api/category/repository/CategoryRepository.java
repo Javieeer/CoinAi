@@ -1,6 +1,7 @@
 package com.coinai.api.category.repository;
 
 import com.coinai.api.category.entity.Category;
+import com.coinai.api.category.enums.CategoryOrigin;
 import com.coinai.api.movement.MovementType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -16,14 +17,17 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
     List<Category> findByUserIdAndMovementType(UUID userId, MovementType movementType);
 
-    List<Category> findByIsDefaultTrue();
+    List<Category> findByOrigin(CategoryOrigin origin);
 
-    List<Category> findByIsDefaultTrueAndMovementType(MovementType movementType);
+    List<Category> findByOriginAndMovementType(
+        CategoryOrigin origin,
+        MovementType movementType
+    );
 
     Optional<Category> findByIdAndUserId(UUID id, UUID userId);
 
     Optional<Category> findByUserIdAndNameIgnoreCase(
-            UUID userId,
-            String name
+        UUID userId,
+        String name
     );
 }

@@ -1,6 +1,7 @@
 package com.coinai.api.user.service.impl;
 
 import com.coinai.api.auth.service.EmailVerificationService;
+import com.coinai.api.category.service.DefaultCategoryService;
 import com.coinai.api.cloudinary.ImageStorageService;
 import com.coinai.api.security.service.AuthenticatedUserService;
 import com.coinai.api.user.dto.request.RegisterRequest;
@@ -26,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private final AuthenticatedUserService authenticatedUserService;
     private final ImageStorageService imageStorageService;
     private final EmailVerificationService emailVerificationService;
+    private final DefaultCategoryService defaultCategoryService;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -41,6 +43,8 @@ public class UserServiceImpl implements UserService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 
         repository.save(user);
+
+        defaultCategoryService.createDefaults(user);
 
         emailVerificationService.createVerificationToken(user);
 

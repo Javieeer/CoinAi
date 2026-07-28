@@ -1,5 +1,6 @@
 package com.coinai.api.category.entity;
 
+import com.coinai.api.category.enums.CategoryOrigin;
 import com.coinai.api.movement.MovementType;
 import com.coinai.api.user.entity.User;
 import jakarta.persistence.*;
@@ -41,8 +42,9 @@ public class Category {
     @Column(name = "movement_type", nullable = false)
     private MovementType movementType;
 
-    @Column(name = "is_default", nullable = false)
-    private boolean isDefault;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CategoryOrigin origin;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

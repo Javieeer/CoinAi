@@ -4,6 +4,7 @@ import com.coinai.api.category.dto.request.CreateCategoryRequest;
 import com.coinai.api.category.dto.request.UpdateCategoryRequest;
 import com.coinai.api.category.dto.response.CategoryResponse;
 import com.coinai.api.category.entity.Category;
+import com.coinai.api.category.enums.CategoryOrigin;
 import com.coinai.api.category.exception.CategoryAlreadyExistsException;
 import com.coinai.api.category.exception.CategoryDeletionNotAllowedException;
 import com.coinai.api.category.exception.CategoryModificationNotAllowedException;
@@ -43,7 +44,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = categoryMapper.toEntity(request);
 
         category.setUser(user);
-        category.setDefault(false);
         category.setCreatedAt(LocalDateTime.now());
 
         category = categoryRepository.save(category);
@@ -61,13 +61,16 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (movementType == null) {
 
-            categories.addAll(categoryRepository.findByIsDefaultTrue());
+            categories.addAll(categoryRepository.findByOrigin(CategoryOrigin.SYSTEM));
             categories.addAll(categoryRepository.findByUserId(user.getId()));
 
         } else {
 
             categories.addAll(
-                    categoryRepository.findByIsDefaultTrueAndMovementType(movementType)
+                    categoryRepository.findByOriginAndMovementType(
+                        CategoryOrigin.SYSTEM,
+                        movementType
+                    )
             );
 
             categories.addAll(
@@ -96,9 +99,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .findByIdAndUserId(id, user.getId())
                 .orElseThrow(CategoryNotFoundException::new);
 
-        if (category.isDefault()) {
-            throw new CategoryModificationNotAllowedException();
-        }
 
         boolean duplicated = categoryRepository.existsByUserIdAndNameIgnoreCase(
                 user.getId(),
@@ -113,6 +113,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setIcon(request.getIcon());
         category.setColor(request.getColor());
         category.setMovementType(request.getMovementType());
+        category.setOrigin(CategoryOrigin.CUSTOM);
 
         category = categoryRepository.save(category);
 
@@ -129,9 +130,6 @@ public class CategoryServiceImpl implements CategoryService {
                 .findByIdAndUserId(id, user.getId())
                 .orElseThrow(CategoryNotFoundException::new);
 
-        if (category.isDefault()) {
-            throw new CategoryDeletionNotAllowedException();
-        }
 
         categoryRepository.delete(category);
 

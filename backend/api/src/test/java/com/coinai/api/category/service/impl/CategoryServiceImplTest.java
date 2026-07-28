@@ -4,9 +4,8 @@ import com.coinai.api.category.dto.request.CreateCategoryRequest;
 import com.coinai.api.category.dto.request.UpdateCategoryRequest;
 import com.coinai.api.category.dto.response.CategoryResponse;
 import com.coinai.api.category.entity.Category;
+import com.coinai.api.category.enums.CategoryOrigin;
 import com.coinai.api.category.exception.CategoryAlreadyExistsException;
-import com.coinai.api.category.exception.CategoryDeletionNotAllowedException;
-import com.coinai.api.category.exception.CategoryModificationNotAllowedException;
 import com.coinai.api.category.exception.CategoryNotFoundException;
 import com.coinai.api.category.mapper.CategoryMapper;
 import com.coinai.api.category.repository.CategoryRepository;
@@ -121,18 +120,16 @@ class CategoryServiceImplTest {
                 Category defaultCategory = Category.builder()
                         .name("Mercado")
                         .movementType(MovementType.EXPENSE)
-                        .isDefault(true)
                         .build();
 
                 Category customCategory = Category.builder()
                         .name("Mascotas")
                         .movementType(MovementType.EXPENSE)
-                        .isDefault(false)
                         .build();
 
                 when(authenticatedUserService.getCurrentUser()).thenReturn(user);
 
-                when(categoryRepository.findByIsDefaultTrue())
+                when(categoryRepository.findByOrigin(CategoryOrigin.SYSTEM))
                         .thenReturn(List.of(defaultCategory));
 
                 when(categoryRepository.findByUserId(user.getId()))
@@ -165,7 +162,6 @@ class CategoryServiceImplTest {
                         .id(categoryId)
                         .name("Mercado")
                         .movementType(MovementType.EXPENSE)
-                        .isDefault(false)
                         .user(user)
                         .build();
 
@@ -218,33 +214,7 @@ class CategoryServiceImplTest {
 
         }
 
-    @Test
-        void shouldNotUpdateDefaultCategory() {
-
-                UUID userId = UUID.randomUUID();
-
-                User user = User.builder()
-                        .id(userId)
-                        .build();
-
-                Category category = Category.builder()
-                        .isDefault(true)
-                        .user(user)
-                        .build();
-
-                when(authenticatedUserService.getCurrentUser()).thenReturn(user);
-
-                when(categoryRepository.findByIdAndUserId(any(), eq(userId)))
-                        .thenReturn(java.util.Optional.of(category));
-
-                assertThrows(
-                        CategoryModificationNotAllowedException.class,
-                        () -> categoryService.update(UUID.randomUUID(), new UpdateCategoryRequest())
-                );
-
-        }
-
-    @Test
+        @Test
         void shouldDeleteCategorySuccessfully() {
 
                 UUID userId = UUID.randomUUID();
@@ -254,7 +224,6 @@ class CategoryServiceImplTest {
                         .build();
 
                 Category category = Category.builder()
-                        .isDefault(false)
                         .user(user)
                         .build();
 
@@ -269,35 +238,7 @@ class CategoryServiceImplTest {
 
         }
 
-    @Test
-        void shouldNotDeleteDefaultCategory() {
-
-                UUID userId = UUID.randomUUID();
-
-                User user = User.builder()
-                        .id(userId)
-                        .build();
-
-                Category category = Category.builder()
-                        .isDefault(true)
-                        .user(user)
-                        .build();
-
-                when(authenticatedUserService.getCurrentUser()).thenReturn(user);
-
-                when(categoryRepository.findByIdAndUserId(any(), eq(userId)))
-                        .thenReturn(java.util.Optional.of(category));
-
-                assertThrows(
-                        CategoryDeletionNotAllowedException.class,
-                        () -> categoryService.delete(UUID.randomUUID())
-                );
-
-                verify(categoryRepository, never()).delete(any());
-
-        }
-
-    @Test
+        @Test
         void shouldThrowWhenDeletingNonExistingCategory() {
 
                 UUID userId = UUID.randomUUID();
