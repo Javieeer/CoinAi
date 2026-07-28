@@ -23,4 +23,5 @@ public interface SubcategoryRepository extends JpaRepository<Subcategory, UUID> 
     List<Subcategory> findByUserIdAndArchivedFalseOrderByNameAsc(
             UUID userId
     );
+
 }

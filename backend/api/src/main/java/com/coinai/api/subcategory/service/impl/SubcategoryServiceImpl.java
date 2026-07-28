@@ -52,7 +52,6 @@ public class SubcategoryServiceImpl implements SubcategoryService {
 
         subcategory.setUser(user);
         subcategory.setCategory(category);
-        subcategory.setDefault(false);
         subcategory.setArchived(false);
         subcategory.setCreatedAt(LocalDateTime.now());
         subcategory.setUpdatedAt(LocalDateTime.now());

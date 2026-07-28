@@ -1,6 +1,7 @@
 package com.coinai.api.subcategory.entity;
 
 import com.coinai.api.category.entity.Category;
+import com.coinai.api.category.enums.CategoryOrigin;
 import com.coinai.api.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,8 +39,9 @@ public class Subcategory {
     @Column(length = 20)
     private String color;
 
-    @Column(name = "is_default", nullable = false)
-    private boolean isDefault;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CategoryOrigin origin;
 
     @Column(name = "is_archived", nullable = false)
     private boolean archived;

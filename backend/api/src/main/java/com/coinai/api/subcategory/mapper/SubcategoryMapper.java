@@ -14,14 +14,12 @@ public interface SubcategoryMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "category", ignore = true)
-    @Mapping(target = "isDefault", ignore = true)
     @Mapping(target = "archived", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Subcategory toEntity(CreateSubcategoryRequest request);
 
     @Mapping(target = "categoryId", source = "category.id")
-    @Mapping(target = "isDefault", source = "default")
     SubcategoryResponse toResponse(Subcategory subcategory);
 
     List<SubcategoryResponse> toResponseList(
