@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 
 void main() {
@@ -11,33 +12,11 @@ class CoinAI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'CoinAI',
       theme: AppTheme.light,
-      home: const HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('CoinAI'),
-      ),
-      body: const Center(
-        child: Text(
-          'Bienvenido a CoinAI',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      routerConfig: AppRouter.router,
     );
   }
 }
