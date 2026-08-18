@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 
-import '../../../../core/network/dio_client.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
 import 'auth_remote_datasource.dart';

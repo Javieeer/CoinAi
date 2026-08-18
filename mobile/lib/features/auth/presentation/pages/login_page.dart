@@ -27,13 +27,19 @@ class _LoginPageState extends State<LoginPage> {
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
 
-  late final AuthBloc _authBloc;
+  void _submit() {
+    FocusScope.of(context).unfocus();
 
-  @override
-  void initState() {
-    super.initState();
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-    _authBloc = AuthBloc();
+    context.read<AuthBloc>().add(
+          LoginRequested(
+            email: _emailController.text.trim(),
+            password: _passwordController.text,
+          ),
+        );
   }
 
   @override
@@ -44,85 +50,78 @@ class _LoginPageState extends State<LoginPage> {
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
 
-    _authBloc.close();
-
     super.dispose();
-  }
-
-  void _submit() {
-    FocusScope.of(context).unfocus();
-
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    _authBloc.add(
-      LoginRequested(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _authBloc,
-      child: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is AuthFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+            ),
+          );
+        }
+
+        if (state is AuthAuthenticated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Inicio de sesión exitoso',
               ),
-            );
-          }
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 420,
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.stretch,
+                    children: [
+                      const LoginHeader(),
 
-          if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Inicio de sesión exitoso'),
-              ),
-            );
-          }
-        },
-        child: Scaffold(
-          body: SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: 420,
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const LoginHeader(),
+                      const SizedBox(
+                        height: 40,
+                      ),
 
-                        const SizedBox(height: 40),
+                      LoginForm(
+                        emailController:
+                            _emailController,
+                        passwordController:
+                            _passwordController,
+                        emailFocusNode:
+                            _emailFocusNode,
+                        passwordFocusNode:
+                            _passwordFocusNode,
+                        onSubmit: _submit,
+                      ),
 
-                        LoginForm(
-                          emailController: _emailController,
-                          passwordController: _passwordController,
-                          emailFocusNode: _emailFocusNode,
-                          passwordFocusNode: _passwordFocusNode,
-                          onSubmit: _submit,
-                        ),
+                      const SizedBox(
+                        height: 24,
+                      ),
 
-                        const SizedBox(height: 24),
+                      LoginButton(
+                        onPressed: _submit,
+                      ),
 
-                        LoginButton(
-                          onPressed: _submit,
-                        ),
+                      const SizedBox(
+                        height: 32,
+                      ),
 
-                        const SizedBox(height: 32),
-
-                        const LoginFooter(),
-                      ],
-                    ),
+                      const LoginFooter(),
+                    ],
                   ),
                 ),
               ),
