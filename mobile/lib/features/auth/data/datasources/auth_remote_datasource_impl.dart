@@ -8,7 +8,11 @@ import 'auth_remote_datasource.dart';
 class AuthRemoteDatasourceImpl
     implements AuthRemoteDatasource {
 
-  final Dio dio = DioClient.instance;
+  final Dio dio;
+
+  AuthRemoteDatasourceImpl(
+    this.dio,
+  );
 
   @override
   Future<LoginResponse> login(
