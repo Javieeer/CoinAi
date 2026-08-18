@@ -6,7 +6,6 @@ import com.coinai.api.auth.dto.response.LoginResponse;
 import com.coinai.api.auth.dto.response.RefreshTokenResponse;
 import com.coinai.api.auth.exception.EmailNotVerifiedException;
 import com.coinai.api.auth.exception.InvalidCredentialsException;
-import com.coinai.api.auth.exception.EmailNotVerifiedException;
 import com.coinai.api.auth.service.AuthService;
 import com.coinai.api.auth.service.RefreshTokenService;
 import com.coinai.api.user.entity.User;
